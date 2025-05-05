@@ -1,0 +1,18 @@
+﻿@model TestViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Test View"; // viewdata is an array that set a title that is dynamically changed in the _layout page
+}
+
+
+<h1> Hello from test controller</h1>
+<h2>Your name is: @Model.Name </h2>
+
+<!--Adding a conditional display-->
+
+@if (Model.DateOfBirth.HasValue)
+{
+    <h2>Your DoB is: @Model.DateOfBirth </h2>
+}
