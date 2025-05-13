@@ -10,20 +10,23 @@
 </head>
 <body style="background-color: #f9ffe7;" data-bs-theme="light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color: #b2c6b6;" data-bs-theme="light">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color: #a9d0e7;" data-bs-theme="light">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:#ffffff; " >Leave Management System</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color:#212529; ">Leave Management System</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item" >
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="LeaveTypes" asp-action="Index">Leave Types</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -37,7 +40,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted" style="background-color: #b2c6b6;">
+    <footer class="border-top footer text-muted" style="background-color: #a9d0e7;">
         <div class="container">
             &copy; 2025 - Leave Management System - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
