@@ -10,8 +10,11 @@ using LeaveManagementSystem.Web.Models.LeaveTypes;
 using AutoMapper;
 using LeaveManagementSystem.Web.Services;
 
+
 namespace LeaveManagementSystem.Web.Controllers;
 
+
+[Authorize(Roles = StaticRoles.Administrator)]
 public class LeaveTypesController(ILeaveTypesService _leaveTypes) : Controller
 {
     private const string NameExistsValidation = "This leave type already exists in the database";
