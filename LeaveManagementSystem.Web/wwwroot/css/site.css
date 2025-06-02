@@ -1,22 +1,53 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background-color: #f9ffe7;
+}
+
+/* Container for your content */
+.periods-container {
+    width: 100%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    border: 2px solid #b2c6b6;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0px 10px 0px 0px #eef4f8;
+}
+
+/* Flex container to hold both the button and the search box */
+.datatable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Search box right-align */
+.dataTables_filter {
+    order: 2;
+    margin-left: auto;
+}
+
+/* Optional: style the button */
+.create-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

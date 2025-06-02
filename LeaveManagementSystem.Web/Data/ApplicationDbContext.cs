@@ -81,6 +81,8 @@ namespace LeaveManagementSystem.Web.Data
         //the datatype of LeaveType which represent a set/collection of records
         // It is recommended to make the entity/table named plural
         public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<LeaveAllocation> LeaveAllocations { get; set; }
+        public DbSet<Period> Periods { get; set; }
     }
 
 }
