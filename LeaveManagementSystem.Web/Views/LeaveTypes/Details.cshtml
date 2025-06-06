@@ -4,6 +4,8 @@
     ViewData["Title"] = $"{Model.Name} Details ";
 }
 
+<div class="container wrapper-container">
+
 <h1>@Model.Name Details</h1>
 
 <div>
@@ -26,4 +28,6 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Edit</a> 
     <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
+</div>
+
 </div>

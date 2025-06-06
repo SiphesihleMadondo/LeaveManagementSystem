@@ -14,16 +14,19 @@ body {
     background-color: #f9ffe7;
 }
 
-/* Container for your content */
-.periods-container {
-    width: 100%;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 15px;
-    border: 2px solid #b2c6b6;
-    padding: 20px;
-    box-sizing: border-box;
-    box-shadow: 0px 10px 0px 0px #eef4f8;
+.nav-link {
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+}
+
+    .nav-link:hover {
+        background-color: #4f6d7a; /* Change to any color you like */
+        color: white !important;
+    }
+
+.collapse .nav-link:hover {
+    background-color: #6c8ea4;
 }
 
 /* Flex container to hold both the button and the search box */
@@ -50,4 +53,15 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.wrapper-container {
+    width: 100%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    border: 2px solid #b2c6b6;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0px 10px 0px 0px #eef4f8;
 }

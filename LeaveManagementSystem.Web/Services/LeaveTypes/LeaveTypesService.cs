@@ -3,7 +3,7 @@ using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Models.LeaveTypes;
 using Microsoft.EntityFrameworkCore;
 
-namespace LeaveManagementSystem.Web.Services;
+namespace LeaveManagementSystem.Web.Services.LeaveTypes;
 
 public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) : ILeaveTypesService
 {
@@ -23,7 +23,7 @@ public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) :
         if (data == null)
         {
 
-            return default(T?); // null
+            return default; // null
         }
 
         var viewData = _mapper.Map<T>(data);

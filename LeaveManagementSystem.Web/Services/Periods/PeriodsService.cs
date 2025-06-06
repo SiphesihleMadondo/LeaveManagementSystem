@@ -2,7 +2,7 @@
 using LeaveManagementSystem.Web.Models.Periods;
 using Microsoft.EntityFrameworkCore;
 
-namespace LeaveManagementSystem.Web.Services
+namespace LeaveManagementSystem.Web.Services.Periods
 {
     public class PeriodsService(ApplicationDbContext _context, IMapper _mapper) : IPeriodsService
     {
@@ -21,7 +21,7 @@ namespace LeaveManagementSystem.Web.Services
 
             if (period == null)
             {
-                return default(T?);
+                return default;
             }
 
             var data = _mapper.Map<T>(period);

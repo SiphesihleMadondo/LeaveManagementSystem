@@ -15,7 +15,6 @@ namespace LeaveManagementSystem.Web.MappingProfiles
             CreateMap<LeaveTypeEditVM, LeaveType>().ReverseMap();
 
 
-            CreateMap<Period, PeriodReadOnlyVM>();
             CreateMap<PeriodCreateVM, Period>();
             CreateMap<PeriodEditVM, Period>().ReverseMap();
         }

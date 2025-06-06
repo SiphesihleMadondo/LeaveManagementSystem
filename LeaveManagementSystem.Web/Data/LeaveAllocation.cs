@@ -1,4 +1,6 @@
-﻿namespace LeaveManagementSystem.Web.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace LeaveManagementSystem.Web.Data
 {
     public class LeaveAllocation: BaseEntity
     {
@@ -19,6 +21,7 @@
 
         public int PeriodId { get; set; }
 
-        public int Days { get; set; }
+        [Precision(5, 2)]
+        public decimal Days { get; set; }
     }
 }

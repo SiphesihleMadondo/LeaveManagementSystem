@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystem.Web.Data;
 using AutoMapper;
 using LeaveManagementSystem.Web.Models.Periods;
-using LeaveManagementSystem.Web.Services;
+using LeaveManagementSystem.Web.Services.Periods;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
