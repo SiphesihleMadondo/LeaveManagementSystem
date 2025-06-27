@@ -11,6 +11,7 @@ namespace LeaveManagementSystem.Web.Models.LeaveTypes
 
         [Display(Name = "Maximum Allocation of Days")]
         public decimal NumberOfDays { get; set; }
+
     }
 
 }

@@ -158,7 +158,8 @@ public class RegisterModel : PageModel
                 }
 
                 var userId = await _userManager.GetUserIdAsync(user);
-                await _leaveAllocationsService.AllocateLeave(userId);
+                var leaveId = await _leaveAllocationsService.GetLeaveTypeIdByNameAsync(StaticRoles.Employee); // get the leave type id for employee
+                await _leaveAllocationsService.AllocateLeave(userId, leaveId);
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

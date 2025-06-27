@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" /> 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/datatables/css/datatables.bootstrap4.css" /> 
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 
 </head>
 <body class="d-flex">
@@ -43,6 +44,10 @@
                         <a class="nav-link text-dark" asp-controller="Periods" asp-action="Index">
                             <i class="bi bi-calendar-event-fill"></i> Periods
                         </a>
+
+                        <a class="nav-link text-dark" asp-controller="LeaveAllocation" asp-action="Index">
+                            <i class="bi bi-people-fill"></i> View Employees
+                        </a>
                     </div>
                 </li>
             }
@@ -72,18 +77,11 @@
         @RenderBody()
     </main>
 
-    @* Optional Footer *@
-    @*
-    <footer class="border-top footer text-muted py-3" style="margin-left: 250px; background-color: #a9d0e7;">
-    <div class="container">
-    &copy; 2025 - Leave Management System - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-    </footer>
-    *@
-
     <!-- Scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.js" asp-append-version="true"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.min.js" asp-append-version="true"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/lib/datatables/js/jquery.datatables.js" asp-append-version="true"></script>
     <script src="~/lib/datatables/js/datatables.bootstrap4.js" asp-append-version="true"></script>

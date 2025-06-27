@@ -3,11 +3,30 @@
 
 @{
     ViewData["Title"] = "View Allocations";
+    var isAdmin = User.IsInRole(StaticRoles.Administrator);
+    var isEmployee = User.IsInRole(StaticRoles.Employee);
+    string message = isAdmin ? "There are no allocations" : "You don't have any allocations. Please contact your administrator.";
 }
 
 <div class="wrapper-container">
 
 <h1> View Allocations for @Model.FirstName @Model.LastName</h1>
+<br />
+    @if (isAdmin)
+    {
+        <a asp-action="Index" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-1" style="width:20%;">
+            <i class="bi bi-arrow-left-circle"></i> Back to List
+        </a>
+        <br />
+    }
+
+    @if (isEmployee)
+    {
+        <a asp-controller="LeaveRequests" asp-action="Index" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-1" style="width:20%;">
+            <i class="bi bi-journal-text"></i> View Request History
+        </a>
+        <br />
+    }
 
 <div>
     <hr />
@@ -46,48 +65,110 @@
 
 <hr />
 
+    @if (isAdmin && !Model.IsCompletedAllocation && Model.LeaveAllocations.Count > 0)
+    {
+        <div class="card">
+            <div class="card-header bg-warning-subtle">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                    Unallocated Leave for period @Model.LeaveAllocations[0].Period.Name
+                </h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle mb-0">
+                    <thead class="table-light text-start">
+                        <tr>
+                            <th>Leave Name</th>
+                            <th>Number of Days</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leaveAllocation in Model.UnAllocated)
+                        {
+                            <tr class="text-center">
+                                <td>@leaveAllocation.Name</td>
+                                <td>
+                                    <span class="badge bg-primary fs-6">@leaveAllocation.NumberOfDays</span>
+                                </td>
+                                <td>
+                                    <form asp-action="AllocateLeave">
+                                        <input type="hidden" name="employeeId" value="@Model.Id" />
+                                        <input type="hidden" name="leaveTypeId" value="@leaveAllocation.Id" />
+
+                                        <div class="d-flex gap-2 mt-3">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning d-flex align-items-center justify-content-center gap-1">
+                                                <i class="bi bi-box-arrow-in-right"></i> Allocate
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br />
+    }
+
 @*if leaveAllocation List has something to avoid null exception*@
     @if (Model.LeaveAllocations.Any())
     {
-        <div class="card">
-            <div class="card-header">
-                <h4>Leave Allocation for period @Model.LeaveAllocations[0].Period.Name</h4>
+        <div class="card shadow-sm">
+            <div class="card-header bg-info-subtle">
+                <h4 class="mb-0">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Leave Allocations for period @Model.LeaveAllocations[0].Period.Name
+                </h4>
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    @*     creating a row *@
-                     <div class="row">
-                        <div class="col"><strong>Leave Name</strong></div>
-                        <div class="col"><strong>Original Allocation</strong></div>
-                        <div class="col"><strong>Current Allocation</strong></div>
-                        <div class="col"><strong>Action</strong></div>
-                      </div>
-                </li>
 
-                @*Each allocation in a list, able to access leave type and period data because of the include in the query*@
-                @foreach (var leaveAllocation in Model.LeaveAllocations)
-                {
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col">@leaveAllocation.LeaveType.Name</div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-primary text-white">@leaveAllocation.Days</span>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-start mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Leave Type</th>
+                            <th>Original Allocation</th>
+                            <th>Current Allocation</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leaveAllocation in Model.LeaveAllocations)
+                        {
+                            var original = leaveAllocation.Days;
+                            var current = leaveAllocation.Days;  
 
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning text-white">@leaveAllocation.Days</span>
-                            </div>
-                            <div class="col">
-                                <a asp-controller="LeaveRequest" asp-action="Create" class="btn btn-outline-success">Request Leave</a>
-                            </div>
+                            <tr>
+                                <td class="text-start">
+                                    <i class="bi bi-briefcase me-2 text-secondary"></i>
+                                    @leaveAllocation.LeaveType.Name
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">@original</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">@current</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="EditAllocation" asp-route-id="@leaveAllocation.Id"
+                                           class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
+                                            <i class="bi bi-pencil-square"></i> Edit Allocation
+                                        </a>
+                                        <a asp-controller="LeaveRequests" asp-action="Create" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-1">
+                                            <i class="bi bi-send-check"></i> Request Leave
+                                        </a>
 
-                        </div>
-                    </li>
-                }
-
-            </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-
     }
     else
     {
@@ -95,7 +176,7 @@
             
             <div class="text-center flex-grow-1">
                 <i class="bi bi-exclamation-triangle-fill text-danger fs-1 me-3"></i>
-                <h3 class="mb-0">You don't have any allocations. Please contact your administrator.</h3>
+                <h3 class="mb-0">@message</h3>
             </div>
         </div>
 

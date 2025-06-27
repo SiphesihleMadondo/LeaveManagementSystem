@@ -1,7 +1,7 @@
 ﻿
 namespace LeaveManagementSystem.Web.Services.CurrentUser
 {
-    public interface ICurreUser
+    public interface ICurrentUser
     {
         Task<ApplicationUser?>GetCurrentUser();
     }

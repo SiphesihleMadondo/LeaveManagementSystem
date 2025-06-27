@@ -4,8 +4,7 @@ namespace LeaveManagementSystem.Web.Models.Periods
 {
     public class PeriodEditVM: BasePeriodVM
     {
-        public string Name { get; set; }
-
+        public string? Name { get; set; } 
 
         [Required]
         [DisplayName("Start Date")]

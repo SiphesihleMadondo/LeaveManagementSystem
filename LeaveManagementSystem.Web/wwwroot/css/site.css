@@ -21,7 +21,7 @@ body {
 }
 
     .nav-link:hover {
-        background-color: #4f6d7a; /* Change to any color you like */
+        background-color: #4f6d7a; 
         color: white !important;
     }
 

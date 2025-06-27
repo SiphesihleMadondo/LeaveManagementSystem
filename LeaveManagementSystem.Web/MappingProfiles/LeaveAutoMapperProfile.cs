@@ -5,9 +5,9 @@ using LeaveManagementSystem.Web.Models.Periods;
 
 namespace LeaveManagementSystem.Web.MappingProfiles
 {
-    public class AutoMapperProfile: Profile
+    public class LeaveAutoMapperProfile: Profile
     {
-        public AutoMapperProfile() {
+        public LeaveAutoMapperProfile() {
 
             CreateMap<LeaveType, LeaveTypeReadOnlyVM>();
             //.ForMember(dest => dest.Days, opt => opt.MapFrom(src => src.NumberOfDays)); //mapping from source to destination, perfomance issue though

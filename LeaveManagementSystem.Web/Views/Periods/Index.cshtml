@@ -8,13 +8,11 @@
 <div class="wrapper-container">
     <h2>Periods</h2>
 
-    <div class="datatable-header">
-        <a asp-action="Create" class="btn btn-outline-primary">Create New</a>
-    </div>
-
+    <a asp-action="Create" class="btn  btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-1" style="width:20%;"><i class="bi bi-plus-circle-fill"></i>Create New</a>
+        <br />
     <div class="table-wrapper">
-        <table id="PeriodsDataTable" class="table table-striped table-hover nowrap" style="width:100%;">
-            <thead>
+        <table id="PeriodsDataTable" class="table table-light table-hover nowrap" style="width:100%;">
+            <thead class="table-primary text-center">
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.Name)</th>
                     <th>@Html.DisplayNameFor(model => model.StartDate)</th>
@@ -30,21 +28,42 @@
                         <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Details</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-info d-flex align-items-center gap-1">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+
+                                <button type="submit" data-id="@item.Id" class="btn btn-outline-danger btnDelete d-flex align-items-center gap-1">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </button>
+                            </div>
+
+
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+        @* adding a form for deletion confirmation and an alert *@
+
+        <form id="DeleteForm" asp-action="Delete">
+            <input type="hidden" id="leaveTypeId" name="id" />
+            @Html.AntiForgeryToken()
+        </form>
+
     </div>
 </div>
-
 
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // DataTable Initialization
             $('#PeriodsDataTable').DataTable({
                 responsive: true,
                 scrollY: '300px',
@@ -57,13 +76,35 @@
             // Move the search box into your custom header div
             $(".dataTables_filter").appendTo(".datatable-header");
 
-            // Set the placeholder and remove the label
+            // Set the placeholder and remove the label text
             $(".dataTables_filter label").each(function () {
                 const $input = $(this).find('input');
                 $input.attr("placeholder", "Search...");
                 $(this).contents().filter(function () {
                     return this.nodeType === 3; // Node.TEXT_NODE
-                }).remove(); // remove the "Search:" text node
+                }).remove();
+            });
+
+            // Delete Button Click Handler
+            $('.btnDelete').on('click', function (e) {
+                e.preventDefault();
+
+                const btn = $(this);
+                const id = btn.data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#leaveTypeId').val(id);
+                        $('#DeleteForm').submit();
+                    }
+                });
             });
         });
     </script>

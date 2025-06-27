@@ -77,6 +77,14 @@ public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) :
         var _lowerName = leaveTypeEditVM.Name.ToLower();
         return await _context.LeaveTypes.AnyAsync(m => m.Name.ToLower().Equals(_lowerName) && m.Id != leaveTypeEditVM.Id);
     }
+    //check maximum number of days for the leave type
+    public async Task<bool> IsLeaveTypeValid(int leaveTypeId, decimal days)
+    {
+        var leaveType = await _context.LeaveTypes
+            .Where(x => x.Id == leaveTypeId && x.NumberOfDays < days)
+            .FirstOrDefaultAsync();
+        return leaveType != null;
+    }
 
 }
 

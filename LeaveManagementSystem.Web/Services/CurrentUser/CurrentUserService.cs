@@ -2,7 +2,7 @@
 
 namespace LeaveManagementSystem.Web.Services.CurrentUser
 {
-    public class CurrentUserService(UserManager<ApplicationUser> _userManager, IHttpContextAccessor _httpContextAccessor):ICurreUser
+    public class CurrentUserService(UserManager<ApplicationUser> _userManager, IHttpContextAccessor _httpContextAccessor):ICurrentUser
     {
         public async Task<ApplicationUser?> GetCurrentUser()
         {

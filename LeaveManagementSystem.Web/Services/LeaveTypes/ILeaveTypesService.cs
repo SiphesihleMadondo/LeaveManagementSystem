@@ -10,6 +10,7 @@ namespace LeaveManagementSystem.Web.Services.LeaveTypes
         Task Edit(LeaveTypeEditVM model);
         Task<T?> Get<T>(int id) where T : class;
         Task<List<LeaveTypeReadOnlyVM>> GetAll();
+        Task<bool> IsLeaveTypeValid(int leaveTypeId, decimal days);
         Task<bool> LeaveTypeExists(int id);
         Task Remove(int id);
     }

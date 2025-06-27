@@ -2,6 +2,7 @@ using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Services.CurrentUser;
 using LeaveManagementSystem.Web.Services.Email;
 using LeaveManagementSystem.Web.Services.LeaveAllocations;
+using LeaveManagementSystem.Web.Services.LeaveRequests;
 using LeaveManagementSystem.Web.Services.LeaveTypes;
 using LeaveManagementSystem.Web.Services.Periods;
 using Microsoft.AspNetCore.Identity;
@@ -21,7 +22,9 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ILeaveTypesService, LeaveTypesService>(); //// letting IoC know about the service layer and interface
 builder.Services.AddScoped<IPeriodsService, PeriodsService>();
 builder.Services.AddScoped<ILeaveAllocationsService, LeaveAllocationsService>();
-builder.Services.AddScoped<ICurreUser, CurrentUserService>();
+builder.Services.AddScoped<ILeaveRequestsService, LeaveRequestsService>();
+
+builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>(); // we want new instant everytime we run the app
 builder.Services.AddHttpContextAccessor();
 

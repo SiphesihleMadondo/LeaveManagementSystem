@@ -12,6 +12,8 @@ namespace LeaveManagementSystem.Web.Data
 
         [Precision(18, 2)]
         public decimal NumberOfDays { get; set; }
+        // get the allocations related to this leaveType, doing the reverse getting all the related leave allocations
+        public List<LeaveAllocation>? leaveAllocations { get; set; }
     }
 
 }
