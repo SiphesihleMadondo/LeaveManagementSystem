@@ -8,7 +8,7 @@
     string message = isAdmin ? "There are no allocations" : "You don't have any allocations. Please contact your administrator.";
 }
 
-<div class="wrapper-container">
+@* <div class="wrapper-container"> *@
 
 <h1> View Allocations for @Model.FirstName @Model.LastName</h1>
 <br />
@@ -113,7 +113,7 @@
         <br />
     }
 
-@*if leaveAllocation List has something to avoid null exception*@
+@* avoid null exception*@
     @if (Model.LeaveAllocations.Any())
     {
         <div class="card shadow-sm">
@@ -153,10 +153,16 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a asp-action="EditAllocation" asp-route-id="@leaveAllocation.Id"
-                                           class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
-                                            <i class="bi bi-pencil-square"></i> Edit Allocation
-                                        </a>
+
+                                        @if (isAdmin)
+                                        {
+                                            <a asp-action="EditAllocation" asp-route-id="@leaveAllocation.Id"
+                                               class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
+                                                <i class="bi bi-pencil-square"></i> Edit Allocation
+                                            </a>
+                                        
+                                        }
+                       
                                         <a asp-controller="LeaveRequests" asp-action="Create" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-1">
                                             <i class="bi bi-send-check"></i> Request Leave
                                         </a>
@@ -182,4 +188,4 @@
 
     }
 
-</div>
+@* </div> *@

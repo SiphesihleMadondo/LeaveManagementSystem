@@ -21,6 +21,7 @@ namespace LeaveManagementSystem.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var leaveTypes = await _leaveTypes.GetAll();
+
             //load the leave types for the dropdown in the view model
             var leaveTypesSelectList = leaveTypes.Select(lt => new SelectListItem
             {
@@ -33,15 +34,15 @@ namespace LeaveManagementSystem.Web.Controllers
             {
                 StartDate = DateOnly.FromDateTime(DateTime.Now), // Default to today
                 EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), // Default to tomorrow
-                LeaveTypesList = leaveTypesSelectList // Assuming you have a property in your ViewModel to hold the leave types
+                LeaveTypesList = leaveTypesSelectList
             };
             return View(model);
         }
 
-        //post the new leave request
+        //post the new leave request and prevent CSRF attacks
         [HttpPost]
-        [ValidateAntiForgeryToken] // To prevent CSRF attacks
-        public async Task<IActionResult> Create(LeaveRequestCreateVM model /*will use ViewModel here*/)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LeaveRequestCreateVM model)
         {
             //make sure the number of days does not exceed the number of days in the leave type allocation
             if (await _leaveRequestsService.ValidateNumberOfDaysRequest(model))
@@ -54,13 +55,12 @@ namespace LeaveManagementSystem.Web.Controllers
             {
                 // Logic to save the leave request
                await  _leaveRequestsService.CreateLeaveRequest(model);
+
                 //redirect to the index page after successful creation
                return RedirectToAction("Index");
             }
 
-            //reload the minumum data before rendering the view if nulls are present
-            //which is the select list since it isn't bound to the form.
-            //re-assign and re-initalize the select list
+            //reload the minumum data before rendering the view if nulls are present and re-assign and re-initalize the select list
             var leaveTypes = await _leaveTypes.GetAll();
             var leaveTypesSelectList = leaveTypes.Select(lt => new SelectListItem
             {
@@ -72,9 +72,9 @@ namespace LeaveManagementSystem.Web.Controllers
             return View(model);
         }
 
-        //employee can cancel a leave request
+        //employee can cancel a leave request and we make sure to prevent CSRF attacks
         [HttpPost]
-        [ValidateAntiForgeryToken] // To prevent CSRF attacks
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             // Logic to cancel the leave request
@@ -84,32 +84,31 @@ namespace LeaveManagementSystem.Web.Controllers
 
         //Administrator / supervisor can view all leave requests
         [Authorize]
-        public async Task<IActionResult> ListRequest()
+        public async Task<IActionResult> ListRequests()
         {
             // Logic to get all leave requests
-            return View();
+            var model = await _leaveRequestsService.AdminGetAllLeaveRequests();
+            return View(model);
         }
 
         //Administrator / supervisor can review a leave request
         [Authorize]
-        public async Task<IActionResult> Review(int leaveRequestId)
+        public async Task<IActionResult> Review(int id)
         {
             // Logic to get the leave request by ID
-            return View();
+            var model =  await _leaveRequestsService.GetLeaveRequestForReview(id);
+            return View(model);
         }
 
-        //post the review of a leave request
+        //post the review of a leave request and we make sure to prevent CSRF attacks
         [HttpPost]
-        [ValidateAntiForgeryToken] // To prevent CSRF attacks
+        [ValidateAntiForgeryToken] 
         [Authorize]
-        public async Task<IActionResult> Review(LeaveRequest leaveRequest /*will use ViewModel here*/)
+        public async Task<IActionResult> ReviewLeaveRequest(int leaveRequestId, bool approved)
         {
-            if (ModelState.IsValid)
-            {
-                // Logic to update the leave request status
-                return RedirectToAction("ListRequest");
-            }
-            return View(leaveRequest);
+            await _leaveRequestsService.ReviewLeaveRequest(leaveRequestId, approved);
+            //redirect to the list of requests after review
+            return RedirectToAction(nameof(ListRequests));
         }
     }
 }

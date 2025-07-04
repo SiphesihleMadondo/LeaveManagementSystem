@@ -23,7 +23,7 @@ public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) :
         if (data == null)
         {
 
-            return default; // null
+            return default; 
         }
 
         var viewData = _mapper.Map<T>(data);
@@ -43,7 +43,7 @@ public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) :
 
     public async Task Edit(LeaveTypeEditVM model)
     {
-        // vis-vesa to the above edit
+        
         var leaveType = _mapper.Map<LeaveType>(model);
         _context.Update(leaveType);
         await _context.SaveChangesAsync();
@@ -51,8 +51,7 @@ public class LeaveTypesService(ApplicationDbContext _context, IMapper _mapper) :
 
     public async Task Create(LeaveTypeCreateVM model)
     {
-        //conversions
-        // mapp to LeaveType the data that is found on this VM --> leaveCreateVM
+        // mapp to LeaveType data that is found on this VM --> leaveCreateVM
         var leaveType = _mapper.Map<LeaveType>(model);
         _context.Add(leaveType);
         await _context.SaveChangesAsync();

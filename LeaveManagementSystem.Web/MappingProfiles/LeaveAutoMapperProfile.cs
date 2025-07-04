@@ -10,7 +10,7 @@ namespace LeaveManagementSystem.Web.MappingProfiles
         public LeaveAutoMapperProfile() {
 
             CreateMap<LeaveType, LeaveTypeReadOnlyVM>();
-            //.ForMember(dest => dest.Days, opt => opt.MapFrom(src => src.NumberOfDays)); //mapping from source to destination, perfomance issue though
+            //.ForMember(dest => dest.Days, opt => opt.MapFrom(src => src.NumberOfDays)); //mapping from source to destination, perfomance issue
             CreateMap<LeaveTypeCreateVM, LeaveType>();
             CreateMap<LeaveTypeEditVM, LeaveType>().ReverseMap();
 

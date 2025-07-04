@@ -10,18 +10,16 @@ namespace LeaveManagementSystem.Web.Services.LeaveRequests
         Task<List<LeaveRequestReadOnlyVM>> GetEmployeeLeaveRequests();
 
         //Administrator / supervisor can view all leave requests
-        Task<List<EmployeeLeaveRequestListVM>> GetAllLeaveRequests();
+         Task<EmployeeLeaveRequestListVM> AdminGetAllLeaveRequests();
 
         //employee can cancel a leave request
         Task CancelLeaveRequest(int leaveRequestId);
 
         //Administrator / supervisor can review a leave request
-        Task ReviewLeaveRequest(ReviewLeaveRequestVM reviewRequest);
+        Task ReviewLeaveRequest(int leaveRequestId, bool approved);
 
         //makes sure the days don’t exceed the allocation.
         Task<bool> ValidateNumberOfDaysRequest(LeaveRequestCreateVM model);
-
-
-
+        Task<ReviewLeaveRequestVM> GetLeaveRequestForReview(int leaveRequestId);
     }
 }

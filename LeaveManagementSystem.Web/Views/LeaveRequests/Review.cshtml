@@ -1,0 +1,104 @@
+﻿@model ReviewLeaveRequestVM
+
+@{
+    ViewData["Title"] = "Review Leave Request";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center fw-semibold">@ViewData["Title"]</h2>
+
+    <!-- Employee Card -->
+    <div class="card shadow-sm border-1 rounded-4 mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-muted mb-3">Employee Information</h5>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-person-circle me-2 text-secondary"></i>
+                    <strong>Name:</strong> @Model.Employee.FirstName @Model.Employee.LastName
+                </div>
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-envelope me-2 text-secondary"></i>
+                    <strong>Email:</strong> @Model.Employee.Email
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Request Details -->
+    <div class="card shadow-sm border-1 rounded-4 mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-muted mb-3">Leave Request Details</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>@Html.DisplayNameFor(model => model.LeaveTypeName):</strong>
+                    <p class="text-dark">@Html.DisplayFor(model => model.LeaveTypeName)</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>@Html.DisplayNameFor(model => model.RequestComments):</strong>
+                    <p class="text-dark">@Html.DisplayFor(model => model.RequestComments)</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>@Html.DisplayNameFor(model => model.StartDate):</strong>
+                    <p class="text-dark">@Html.DisplayFor(model => model.StartDate)</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>@Html.DisplayNameFor(model => model.EndDate):</strong>
+                    <p class="text-dark">@Html.DisplayFor(model => model.EndDate)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between flex-wrap gap-2">
+        <form id="ApprovalForm" method="post" asp-action="ReviewLeaveRequest">
+            <input type="hidden" name="leaveRequestId" value="@Model.Id" id="leaveRequestId" />
+            <input type="hidden" name="approved" id="approved" value="" />
+
+            <button type="button" class="btn btn-success btnApprove" data-id="@Model.Id" data-approved="true">
+                <i class="bi bi-check-circle me-1"></i> Approve
+            </button>
+
+            <button type="button" class="btn btn-danger btnReject" data-id="@Model.Id" data-approved="false">
+                <i class="bi bi-x-circle me-1"></i> Reject
+            </button>
+        </form>
+
+        <a asp-action="ListRequests" class="btn btn-secondary ms-auto">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.btnApprove, .btnReject').on('click', function (e) {
+                const btn = $(this);
+                const approved = btn.data('approved');
+                const id = btn.data('id');
+
+                Swal.fire({
+                    title: approved ? 'Approve this request?' : 'Reject this request?',
+                    text: "You won't be able to undo this action.",
+                    icon: approved ? 'success' : 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: approved ? '#28a745' : '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: approved ? 'Yes, approve it!' : 'Yes, reject it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                       var btn = $(this);
+                            var id = btn.data('id');
+                            var approved = btn.data('approved');
+                            $('#leaveRequestId').val(id);
+                            $('#approved').val(approved);
+                            $('#ApprovalForm').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

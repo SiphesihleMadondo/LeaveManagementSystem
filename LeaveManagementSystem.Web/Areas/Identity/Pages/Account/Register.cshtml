@@ -45,6 +45,10 @@
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
+            <div class="form-floating mb-3">
+                @* add the date joined hidden field *@
+                <input type="hidden" asp-for="Input.DateOfJoining" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
             @foreach (var role in Model.RoleNames)
             {
                 <div class="form-check">

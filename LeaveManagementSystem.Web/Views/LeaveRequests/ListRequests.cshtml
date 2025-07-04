@@ -1,0 +1,194 @@
+﻿@model EmployeeLeaveRequestListVM
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Leave Requests List";
+}
+
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row g-4 my-4">
+
+    <!-- Total Requests -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm border-1 rounded-4 p-3">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3">
+                    <i class="bi bi-files fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.TotalRequests</h3>
+                <span class="text-muted">@Html.DisplayNameFor(model => model.TotalRequests)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved Requests -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm border-1 rounded-4 p-3">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 mb-3">
+                    <i class="bi bi-check-circle fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.ApprovedRequests</h3>
+                <span class="text-muted">@Html.DisplayNameFor(model => model.ApprovedRequests)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Requests -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm border-1 rounded-4 p-3">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 mb-3">
+                    <i class="bi bi-clock fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.PendingRequests</h3>
+                <span class="text-muted">@Html.DisplayNameFor(model => model.PendingRequests)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejected Requests -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm border-1 rounded-4 p-3">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 mb-3">
+                    <i class="bi bi-x-octagon fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.RejectedRequests</h3>
+                <span class="text-muted">@Html.DisplayNameFor(model => model.RejectedRequests)</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<hr />
+<h2>Leave Requests</h2>
+<hr />
+
+
+    @if (Model.LeaveRequests.Count == 0)
+    {
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle-fill"></i> <p class="mb-0 fs-5">No leave requests found for the selected period.</p>
+        </div>
+    }
+    else
+    {
+    <table id="LeaveRequestsDataTable" class="table table-light table-hover nowrap">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LeaveRequests[0].LeaveTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LeaveRequests[0].NumberOfDays)
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LeaveRequests[0].StartDate)
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LeaveRequests[0].EndDate)
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LeaveRequests[0].LeaveRequestStatus)
+
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.LeaveRequests)
+                {
+                    var className = string.Empty;
+                    @if (item.LeaveRequestStatus == LeaveRequestStatusEnum.Approved)
+                    {
+                        className = "success";
+                    }
+                    else if (item.LeaveRequestStatus == LeaveRequestStatusEnum.Rejected)
+                    {
+                        className = "danger";
+                    }
+                    else if (item.LeaveRequestStatus == LeaveRequestStatusEnum.Pending)
+                    {
+                        className = "warning";
+                    }
+                    else if (item.LeaveRequestStatus == LeaveRequestStatusEnum.Cancelled)
+                    {
+                        className = "dark";
+                    }
+                    <tr>
+                        <td class="text-start">
+                            <i class="bi bi-briefcase me-2 text-secondary"></i>
+                        @($"{item.EmployeeFirstName} {item.EmployeeLastName} - {item.LeaveTypeName}")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NumberOfDays)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndDate)
+                        </td>
+                        <td>
+                            <span class="badge bg-@className">@item.LeaveRequestStatus.ToString()</span>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                @if (item.LeaveRequestStatus == LeaveRequestStatusEnum.Pending)
+                                {
+                                    <a asp-action="Review" asp-route-id="@item.Id" class="btn btn-sm btn-info d-flex align-items-center gap-2">
+                                        <i class="bi bi bi-eye"></i>
+                                        Review
+                                    </a>
+                                }
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+@section Scripts 
+{
+    <script>
+
+        $(document).ready(function () {
+           // DataTable Initialization
+           $('#LeaveRequestsDataTable').DataTable({
+               responsive: true,
+               scrollY: '300px',
+               scrollCollapse: true,
+               paging: true,
+               pageLength: 10,
+               lengthMenu: [10, 25, 50, 75, 100]
+           });
+
+           // Move the search box into your custom header div
+           $(".dataTables_filter").appendTo(".datatable-header");
+
+           // Set the placeholder and remove the label text
+           $(".dataTables_filter label").each(function () {
+               const $input = $(this).find('input');
+               $input.attr("placeholder", "Search...");
+               $(this).contents().filter(function () {
+                   return this.nodeType === 3; 
+               }).remove();
+           });
+
+        });
+    </script>
+
+}
+    

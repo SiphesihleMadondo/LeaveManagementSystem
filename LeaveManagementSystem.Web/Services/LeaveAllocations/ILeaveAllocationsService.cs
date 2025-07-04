@@ -2,6 +2,7 @@
 
 
 
+
 namespace LeaveManagementSystem.Web.Services.LeaveAllocations
 {
     public interface ILeaveAllocationsService
@@ -12,5 +13,8 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocations
         Task<List<EmployeeListVM>> GetemployeesAsync();
         Task<int> GetLeaveTypeIdByNameAsync(string employee);
         Task UpdateLeaveAllocation(LeaveAllocationEditVM leaveAllocationEditVM);
+
+        Task<LeaveAllocation> GetCurrentAllocation(int leaveTypeId, string employeeId);
+        Task<bool> AllocationExists(string? UserId, int periodId, int leaveTypeId);
     }
 }

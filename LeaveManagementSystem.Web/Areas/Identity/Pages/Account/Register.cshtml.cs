@@ -110,7 +110,12 @@ public class RegisterModel : PageModel
 
         [Required]
         public string RoleName { get; set; }
-      
+
+        //a hidden field to hold the date of joining the company
+        [HiddenInput(DisplayValue = false)]
+        public DateOnly DateOfJoining { get; set; } = DateOnly.FromDateTime(DateTime.Now); // default to today, can be changed later
+
+
     }
 
 
@@ -140,8 +145,13 @@ public class RegisterModel : PageModel
             user.DateOfBirth = Input.DateOfBirth;
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
+            user.DateOfJoining = Input.DateOfJoining; // set the date of joining the company
 
             var result = await _userManager.CreateAsync(user, Input.Password); // the insert 
+
+            //allocate sick leave days to the new user
+            //this is done by the LeaveAllocationsService, which is injected in the constructor
+           
 
             if (result.Succeeded)
             {
@@ -158,7 +168,7 @@ public class RegisterModel : PageModel
                 }
 
                 var userId = await _userManager.GetUserIdAsync(user);
-                var leaveId = await _leaveAllocationsService.GetLeaveTypeIdByNameAsync(StaticRoles.Employee); // get the leave type id for employee
+                var leaveId = await _leaveAllocationsService.GetLeaveTypeIdByNameAsync(StaticLeaveTypes.AnnualLeave); // get the leave type id for employee
                 await _leaveAllocationsService.AllocateLeave(userId, leaveId);
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

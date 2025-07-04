@@ -7,6 +7,15 @@ namespace LeaveManagementSystem.Web.Services.Periods
     public class PeriodsService(ApplicationDbContext _context, IMapper _mapper) : IPeriodsService
     {
 
+        public async Task<Period> GetCurrentPeriod()
+        {
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            var period = await _context.Periods
+                .SingleAsync(p => p.StartDate.Year == currentDate.Year);
+
+            return period;
+        }
 
         public async Task<List<PeriodReadOnlyVM>> GetResult()
         {

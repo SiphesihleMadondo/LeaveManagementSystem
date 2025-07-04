@@ -78,7 +78,6 @@ namespace LeaveManagementSystem.Web.Controllers
             //if model state is valid, proceed to update the allocation
             if (ModelState.IsValid)
             {
-                // Assuming you have a method to update the allocation in your service
                 await _leaveAllocationsService.UpdateLeaveAllocation(leaveAllocation);
                 return RedirectToAction(nameof(Details), new { UserId = leaveAllocation?.employee?.Id });
             }

@@ -9,5 +9,8 @@ namespace LeaveManagementSystem.Web.Data
         public string LastName { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
+
+        //date of joining the company
+        public DateOnly DateOfJoining { get; set; }
     }
 }

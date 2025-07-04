@@ -12,8 +12,8 @@ namespace LeaveManagementSystem.Web.Services.Email
             //provide all the parameter and validation needed to send an email
 
             var fromAddress = _configuration["EmailSettings:DefaultEmailAddress"]; //section then key
-            var smtpServer = _configuration["EmailSettings:Server"]; //section then key
-            var smtpPort = Convert.ToInt32(_configuration["EmailSettings:Port"]); //section then key
+            var smtpServer = _configuration["EmailSettings:Server"]; 
+            var smtpPort = Convert.ToInt32(_configuration["EmailSettings:Port"]); 
             var message = new MailMessage
             {
                 From = new MailAddress(fromAddress),

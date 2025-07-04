@@ -13,14 +13,15 @@ namespace LeaveManagementSystem.Web.Models.LeaveRequests
         [Display(Name = "End Date")]
         public DateOnly EndDate { get; set; }
 
+        // need the ID here, not the entire LeaveType object(data model)
         [Required]
         [Display(Name = "Leave Type")]
-        public int LeaveTypeId { get; set; }  // I only need the ID here, not to reference the entire LeaveType object(data model)
+        public int LeaveTypeId { get; set; }  
 
 
         [Display(Name = "Additional Infomartion")]
         [MaxLength(250, ErrorMessage = "The comment cannot exceed 250 characters.")]
-        public string? RequestComment { get; set; } // This is the comment the employee can add when creating a leave request
+        public string? RequestComment { get; set; } 
 
         public IEnumerable<SelectListItem>?  LeaveTypesList { get; set; }
 

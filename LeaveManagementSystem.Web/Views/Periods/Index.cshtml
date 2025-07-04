@@ -5,11 +5,12 @@
 }
 
 
-<div class="wrapper-container">
+@* <div class="wrapper-container"> *@
     <h2>Periods</h2>
 
+<br />
     <a asp-action="Create" class="btn  btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-1" style="width:20%;"><i class="bi bi-plus-circle-fill"></i>Create New</a>
-        <br />
+<br />
     <div class="table-wrapper">
         <table id="PeriodsDataTable" class="table table-light table-hover nowrap" style="width:100%;">
             <thead class="table-primary text-center">
@@ -58,7 +59,7 @@
         </form>
 
     </div>
-</div>
+@* </div> *@
 
 @section Scripts {
     <script>
@@ -81,7 +82,7 @@
                 const $input = $(this).find('input');
                 $input.attr("placeholder", "Search...");
                 $(this).contents().filter(function () {
-                    return this.nodeType === 3; // Node.TEXT_NODE
+                    return this.nodeType === 3;
                 }).remove();
             });
 

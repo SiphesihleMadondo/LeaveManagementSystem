@@ -13,9 +13,7 @@ namespace LeaveManagementSystem.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index() //here's the action
-        {
-            //this where you define business logic
+        public IActionResult Index(){ 
             return View();
         }
 
@@ -27,15 +25,15 @@ namespace LeaveManagementSystem.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            //can be queries
-            //calculations e.t.c.
-            var model = new ErrorViewModel // we initialising and creating an object of ErrorViewModel and storing it in abject called model
+            //initialising and creating an object of ErrorViewModel and storing it in abject called model
+            var model = new ErrorViewModel 
             {
-                //RequestId is a property in ErrorViewModel
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier // and asigning this value to the RequestId
+                //asigning the value to the RequestId
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
 
             };
-            return View(model); // then you can say return view with the data --> View(model). sending the object to the view.
+
+            return View(model); 
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace LeaveManagementSystem.Web.Models.LeaveAllocations
+﻿
+namespace LeaveManagementSystem.Web.Models.LeaveAllocations
 {
     public class EmployeeListVM
     {
