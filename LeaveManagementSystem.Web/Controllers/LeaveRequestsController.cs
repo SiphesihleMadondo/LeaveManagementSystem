@@ -11,14 +11,19 @@ namespace LeaveManagementSystem.Web.Controllers
     {
 
         //employee can view his/her leave requests
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int allocationId)
         {
             var model = await _leaveRequestsService.GetEmployeeLeaveRequests();
+
+            // Store allocationId in TempData to pass it to the View or later redirect
+            TempData["AllocationId"] = allocationId;
+
             return View(model);
         }
 
+
         //employee can create a new leave request
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? leaveTypeId)
         {
             var leaveTypes = await _leaveTypes.GetAll();
 
@@ -26,7 +31,9 @@ namespace LeaveManagementSystem.Web.Controllers
             var leaveTypesSelectList = leaveTypes.Select(lt => new SelectListItem
             {
                 Value = lt.Id.ToString(),
-                Text = lt.Name
+                Text = lt.Name,
+                Selected = leaveTypeId.HasValue && lt.Id == leaveTypeId.Value // Pre-select the leave type if provided
+
             }).ToList();
 
             //create the view model and pass the leave types to it
@@ -83,7 +90,7 @@ namespace LeaveManagementSystem.Web.Controllers
         }
 
         //Administrator / supervisor can view all leave requests
-        [Authorize]
+        [Authorize (Policy = "AdminSupervisorOnly")]
         public async Task<IActionResult> ListRequests()
         {
             // Logic to get all leave requests

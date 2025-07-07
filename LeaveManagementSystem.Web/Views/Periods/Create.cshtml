@@ -49,4 +49,28 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+          // Get today's date in yyyy-mm-dd format
+        const today = new Date().toISOString().split('T')[0];
+
+        // Set default value for the fields
+        $("#StartDate").val(today);
+        $("#EndDate").val(today);
+
+        $( function() {
+          $( "#StartDate" ).datepicker({
+              dateFormat: 'yy-mm-dd',
+              changeMonth: true,
+              changeYear: true,
+
+          });
+          $( "#EndDate" ).datepicker({
+              dateFormat: 'yy-mm-dd',
+              changeMonth: true,
+              changeYear: true,
+
+          });
+        } );
+    </script>
 }

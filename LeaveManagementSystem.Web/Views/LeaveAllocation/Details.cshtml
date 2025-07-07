@@ -10,7 +10,6 @@
 
 @* <div class="wrapper-container"> *@
 
-<h1> View Allocations for @Model.FirstName @Model.LastName</h1>
 <br />
     @if (isAdmin)
     {
@@ -22,46 +21,49 @@
 
     @if (isEmployee)
     {
-        <a asp-controller="LeaveRequests" asp-action="Index" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-1" style="width:20%;">
+
+    <div class="d-flex flex-column align-items-center" style="max-width: 300px; margin: auto;">
+        <!-- User Profile Card -->
+        <div class="card border-0 shadow rounded-4 p-4 w-100 mb-3">
+            <div class="text-center">
+                <!-- Profile Image/Icon -->
+                <div class="position-relative d-inline-block">
+                    <div class="avatar-icon bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-2 text-secondary"></i>
+                    </div>
+                    <span class="status-dot bg-success border border-white position-absolute bottom-0 end-0 rounded-circle" style="width: 12px; height: 12px;"></span>
+                </div>
+
+                <!-- User Info -->
+                <h5 class="mt-3 fw-semibold mb-1">@Model.FirstName @Model.LastName</h5>
+                <p class="text-muted mb-0"><i class="bi bi-envelope me-1"></i>@Model.Email</p>
+                <p class="text-muted"><i class="bi bi-calendar-date me-1"></i>@Model.DateOfBirth.ToShortDateString()</p>
+            </div>
+
+            <!-- Action Icons -->
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <button class="btn btn-light border rounded-circle shadow-sm" title="Profile">
+                    <i class="bi bi-person-fill text-primary"></i>
+                </button>
+                <button class="btn btn-light border rounded-circle shadow-sm" title="Notifications">
+                    <i class="bi bi-bell-fill text-warning"></i>
+                </button>
+                <button class="btn btn-light border rounded-circle shadow-sm" title="Warning">
+                    <i class="bi bi-exclamation-circle text-warning"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- View Request History Button -->
+        <a asp-controller="LeaveRequests" asp-action="Index"
+           class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2">
             <i class="bi bi-journal-text"></i> View Request History
         </a>
-        <br />
+    </div>
+
+ 
     }
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.DateOfBirth)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DateOfBirth)
-        </dd>
-
-    </dl>
-
-</div>
 
 <hr />
 
@@ -154,20 +156,21 @@
                                 <td>
                                     <div class="btn-group" role="group">
 
-                                        @if (isAdmin)
-                                        {
-                                            <a asp-action="EditAllocation" asp-route-id="@leaveAllocation.Id"
-                                               class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
-                                                <i class="bi bi-pencil-square"></i> Edit Allocation
-                                            </a>
-                                        
-                                        }
-                       
-                                        <a asp-controller="LeaveRequests" asp-action="Create" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-1">
-                                            <i class="bi bi-send-check"></i> Request Leave
+                                    @if (isAdmin)
+                                    {
+                                        <a asp-action="EditAllocation" asp-route-id="@leaveAllocation.Id"
+                                           class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
+                                            <i class="bi bi-pencil-square"></i> Edit Allocation
                                         </a>
 
-                                    </div>
+                                    }
+                                    @if (isEmployee)
+                                    {
+                                        <a asp-controller="LeaveRequests" asp-action="Create" asp-route-leaveTypeId="@leaveAllocation.LeaveType.Id" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-1">
+                                            <i class="bi bi-send-check"></i> Request Leave
+                                        </a>
+                                    }
+                                </div>
                                 </td>
                             </tr>
                         }

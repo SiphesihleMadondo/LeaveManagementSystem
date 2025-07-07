@@ -10,12 +10,12 @@ namespace LeaveManagementSystem.Web.Models.Periods
 
         [Required]
         [DisplayName("Start Date")]
-        [DataType(DataType.Date)]
+        //[DataType(DataType.Date)]
         public DateOnly StartDate { get; set; }
 
         [Required]
         [Display(Name = "End Date")]
-        [DataType(DataType.Date)]
+        //[DataType(DataType.Date)]
         [DateGreaterThan("StartDate", ErrorMessage = "End date must be after start date.")]
         public DateOnly EndDate { get; set; }
     }

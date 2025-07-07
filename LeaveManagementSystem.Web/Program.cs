@@ -28,6 +28,16 @@ builder.Services.AddScoped<ILeaveCalculatorService, LeaveCalculatorService>();
 
 builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>(); // we want new instant everytime we run the app
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminSupervisorOnly", policy =>
+    {
+        policy.RequireRole(StaticRoles.Administrator, StaticRoles.Supervisor);
+        
+    });
+
+});
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
