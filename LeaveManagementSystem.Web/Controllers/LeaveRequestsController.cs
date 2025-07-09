@@ -1,7 +1,6 @@
-﻿using LeaveManagementSystem.Web.Models.LeaveRequests;
-using LeaveManagementSystem.Web.Services.LeaveRequests;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
-using Microsoft.AspNetCore.Mvc;
+﻿using LeaveManagementSystem.Application.Models.LeaveRequests;
+using LeaveManagementSystem.Application.Services.LeaveRequests;
+using LeaveManagementSystem.Application.Services.LeaveTypes;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LeaveManagementSystem.Web.Controllers
@@ -56,15 +55,15 @@ namespace LeaveManagementSystem.Web.Controllers
             {
                 ModelState.AddModelError(string.Empty, "The number of days requested is invalid.");
                 ModelState.AddModelError(nameof(model.EndDate), "The number of days requested exceeds your leave allocation for this leave type.");
-            } 
+            }
 
             if (ModelState.IsValid)
             {
                 // Logic to save the leave request
-               await  _leaveRequestsService.CreateLeaveRequest(model);
+                await _leaveRequestsService.CreateLeaveRequest(model);
 
                 //redirect to the index page after successful creation
-               return RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
 
             //reload the minumum data before rendering the view if nulls are present and re-assign and re-initalize the select list
@@ -90,7 +89,7 @@ namespace LeaveManagementSystem.Web.Controllers
         }
 
         //Administrator / supervisor can view all leave requests
-        [Authorize (Policy = "AdminSupervisorOnly")]
+        [Authorize(Policy = "AdminSupervisorOnly")]
         public async Task<IActionResult> ListRequests()
         {
             // Logic to get all leave requests
@@ -103,13 +102,13 @@ namespace LeaveManagementSystem.Web.Controllers
         public async Task<IActionResult> Review(int id)
         {
             // Logic to get the leave request by ID
-            var model =  await _leaveRequestsService.GetLeaveRequestForReview(id);
+            var model = await _leaveRequestsService.GetLeaveRequestForReview(id);
             return View(model);
         }
 
         //post the review of a leave request and we make sure to prevent CSRF attacks
         [HttpPost]
-        [ValidateAntiForgeryToken] 
+        [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> ReviewLeaveRequest(int leaveRequestId, bool approved)
         {

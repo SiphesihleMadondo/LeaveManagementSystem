@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using LeaveManagementSystem.Application.Models.Periods;
+using LeaveManagementSystem.Application.Services.Periods;
 using Microsoft.EntityFrameworkCore;
-using LeaveManagementSystem.Web.Data;
-using AutoMapper;
-using LeaveManagementSystem.Web.Models.Periods;
-using LeaveManagementSystem.Web.Services.Periods;
+
 
 namespace LeaveManagementSystem.Web.Controllers
 {
     [Authorize(Roles = StaticRoles.Administrator)]
     public class PeriodsController(IPeriodsService _periodsService) : Controller
     {
-       
+
 
         // GET: Periods
         public async Task<IActionResult> Index()
@@ -34,7 +27,7 @@ namespace LeaveManagementSystem.Web.Controllers
             }
 
             var period = await _periodsService.GetT<PeriodReadOnlyVM>(id.Value);
-               
+
             if (period == null)
             {
                 return NotFound();
@@ -85,7 +78,7 @@ namespace LeaveManagementSystem.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, PeriodEditVM  periodEdit)
+        public async Task<IActionResult> Edit(int id, PeriodEditVM periodEdit)
         {
             if (id != periodEdit.Id)
             {

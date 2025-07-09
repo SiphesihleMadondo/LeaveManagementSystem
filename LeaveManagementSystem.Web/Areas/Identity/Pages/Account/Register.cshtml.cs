@@ -2,8 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using LeaveManagementSystem.Web.Services.LeaveAllocations;
-using Microsoft.AspNetCore.Identity;
+using LeaveManagementSystem.Application.Services.LeaveAllocations;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account;
@@ -96,8 +95,8 @@ public class RegisterModel : PageModel
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
         [Display(Name = "First Name")]
-        public string FirstName { get; set; } 
-        
+        public string FirstName { get; set; }
+
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
         [Display(Name = "Las tName")]
@@ -141,7 +140,7 @@ public class RegisterModel : PageModel
             var user = CreateUser();
 
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None); //can be any username field, if you decide otherwise,
-            await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None); 
+            await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
             user.DateOfBirth = Input.DateOfBirth;
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
@@ -151,7 +150,7 @@ public class RegisterModel : PageModel
 
             //allocate sick leave days to the new user
             //this is done by the LeaveAllocationsService, which is injected in the constructor
-           
+
 
             if (result.Succeeded)
             {
@@ -162,7 +161,8 @@ public class RegisterModel : PageModel
                 {
                     await _userManager.AddToRolesAsync(user, [StaticRoles.Employee, StaticRoles.Supervisor]);// ASSIGN to multiple roles
                 }
-                else {
+                else
+                {
 
                     await _userManager.AddToRoleAsync(user, StaticRoles.Employee);// ASSIGN to a role
                 }

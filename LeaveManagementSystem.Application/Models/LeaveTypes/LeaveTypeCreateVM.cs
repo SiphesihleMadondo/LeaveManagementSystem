@@ -1,0 +1,17 @@
+﻿namespace LeaveManagementSystem.Application.Models.LeaveTypes
+{
+    public class LeaveTypeCreateVM()
+    {
+        //validations....
+
+        [Required]
+        [Length(4, 150, ErrorMessage = "You have violeted the length requirements")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        [Range(1, 90, ErrorMessage = "You have violeted the maximum number of days required, it must between 1 - 90")]
+        [Display(Name = "Maximum Allocation of Days")]
+        public decimal NumberOfDays { get; set; }
+    }
+
+}

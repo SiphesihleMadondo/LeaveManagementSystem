@@ -1,5 +1,4 @@
-using LeaveManagementSystem.Web.Models;
-using Microsoft.AspNetCore.Mvc;
+using LeaveManagementSystem.Application.Models;
 using System.Diagnostics;
 
 namespace LeaveManagementSystem.Web.Controllers
@@ -13,7 +12,8 @@ namespace LeaveManagementSystem.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(){ 
+        public IActionResult Index()
+        {
             return View();
         }
 
@@ -26,14 +26,14 @@ namespace LeaveManagementSystem.Web.Controllers
         public IActionResult Error()
         {
             //initialising and creating an object of ErrorViewModel and storing it in abject called model
-            var model = new ErrorViewModel 
+            var model = new ErrorViewModel
             {
                 //asigning the value to the RequestId
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
 
             };
 
-            return View(model); 
+            return View(model);
         }
     }
 }

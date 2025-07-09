@@ -1,7 +1,6 @@
-﻿using LeaveManagementSystem.Web.Services.LeaveAllocations;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using LeaveManagementSystem.Application.Models.LeaveAllocations;
+using LeaveManagementSystem.Application.Services.LeaveAllocations;
+using LeaveManagementSystem.Application.Services.LeaveTypes;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
@@ -38,14 +37,16 @@ namespace LeaveManagementSystem.Web.Controllers
         [Authorize(Roles = StaticRoles.Administrator)]
         public async Task<IActionResult> EditAllocation(int? id)
         {
-            if (id == null) { 
+            if (id == null)
+            {
 
-                 return NotFound();
+                return NotFound();
             }
 
             var allocation = await _leaveAllocationsService.GetEmployeeAllocation(id.Value);
 
-            if (allocation == null) {
+            if (allocation == null)
+            {
                 return BadRequest();
             }
 
@@ -70,7 +71,7 @@ namespace LeaveManagementSystem.Web.Controllers
             }
 
             // check if the leave type is valid and if the number of days is valid
-            if ( await _leaveTypes.IsLeaveTypeValid(leaveAllocation.LeaveType.Id, leaveAllocation.Days))
+            if (await _leaveTypes.IsLeaveTypeValid(leaveAllocation.LeaveType.Id, leaveAllocation.Days))
             {
                 ModelState.AddModelError("Days", "The allocation exceeds the valid number of days for this leave type.");
             }
@@ -81,7 +82,7 @@ namespace LeaveManagementSystem.Web.Controllers
                 await _leaveAllocationsService.UpdateLeaveAllocation(leaveAllocation);
                 return RedirectToAction(nameof(Details), new { UserId = leaveAllocation?.employee?.Id });
             }
-            
+
             var days = leaveAllocation.Days;
             // If the model state is not valid, return the view with the current leave allocation data
             var allocationFromDb = await _leaveAllocationsService.GetEmployeeAllocation(leaveAllocation.Id);
@@ -93,8 +94,8 @@ namespace LeaveManagementSystem.Web.Controllers
         //allowing the admin
         public async Task<IActionResult> Details(string? UserId)
         {
-           var employeeAllocationVM = await _leaveAllocationsService.GetEmployeeAllocations(UserId);
-           return View(employeeAllocationVM);
+            var employeeAllocationVM = await _leaveAllocationsService.GetEmployeeAllocations(UserId);
+            return View(employeeAllocationVM);
         }
 
 

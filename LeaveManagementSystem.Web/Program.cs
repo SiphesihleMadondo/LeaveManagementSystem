@@ -1,46 +1,52 @@
-using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Services.CurrentUser;
-using LeaveManagementSystem.Web.Services.Email;
-using LeaveManagementSystem.Web.Services.LeaveAllocations;
-using LeaveManagementSystem.Web.Services.LeaveCalculationService;
-using LeaveManagementSystem.Web.Services.LeaveRequests;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
-using LeaveManagementSystem.Web.Services.Periods;
-using Microsoft.AspNetCore.Identity;
+using LeaveManagementSystem.Application;
+using LeaveManagementSystem.Application.Services.CurrentUser;
+using LeaveManagementSystem.Application.Services.Email;
+using LeaveManagementSystem.Application.Services.LeaveAllocations;
+using LeaveManagementSystem.Application.Services.LeaveCalculationService;
+using LeaveManagementSystem.Application.Services.LeaveRequests;
+using LeaveManagementSystem.Application.Services.LeaveTypes;
+using LeaveManagementSystem.Application.Services.Periods;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the (IoC)container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//added auto _mapper to our dependecy injection container
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddScoped<ILeaveTypesService, LeaveTypesService>(); //// letting IoC know about the service layer and interface
-builder.Services.AddScoped<IPeriodsService, PeriodsService>();
-builder.Services.AddScoped<ILeaveAllocationsService, LeaveAllocationsService>();
-builder.Services.AddScoped<ILeaveRequestsService, LeaveRequestsService>();
-builder.Services.AddScoped<ILeaveCalculatorService, LeaveCalculatorService>();
+//adding the Services to the container
+DataServicesRegistration.AddDataServices(builder.Services, builder.Configuration);
+ApplicationServicesRegistration.AddApplicationServices(builder.Services);
 
-builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
-builder.Services.AddTransient<IEmailSender, EmailSender>(); // we want new instant everytime we run the app
+builder.Host.UseSerilog((context, config) =>
+{
+    config.WriteTo.Console()
+    .ReadFrom.Configuration(context.Configuration);
+});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminSupervisorOnly", policy =>
     {
         policy.RequireRole(StaticRoles.Administrator, StaticRoles.Supervisor);
-        
+
     });
 
 });
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    // Configure identity options here if needed, e.g. password requirements, lockout settings, etc.
+    options.SignIn.RequireConfirmedAccount = false; // Set to true if you want email confirmation
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.SignIn.RequireConfirmedAccount = true;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();

@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using LeaveManagementSystem.Application.Models.LeaveTypes;
+using LeaveManagementSystem.Application.Services.LeaveTypes;
 using Microsoft.EntityFrameworkCore;
-using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Models.LeaveTypes;
-using AutoMapper;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
+
 
 
 namespace LeaveManagementSystem.Web.Controllers;
 
 
 [Authorize(Roles = StaticRoles.Administrator)]
-public class LeaveTypesController(ILeaveTypesService _leaveTypes) : Controller
+public class LeaveTypesController(ILeaveTypesService _leaveTypes, ILogger<LeaveTypesController> _logger) : Controller
 {
     private const string NameExistsValidation = "This leave type already exists in the database";
 
     // GET: LeaveTypes
     public async Task<IActionResult> Index()
     {
+        _logger.LogInformation("Loading Leave Types");
         var viewData = await _leaveTypes.GetAll();
         return View(viewData);
     }
@@ -67,6 +61,8 @@ public class LeaveTypesController(ILeaveTypesService _leaveTypes) : Controller
             await _leaveTypes.Create(leaveCreate);
             return RedirectToAction(nameof(Index));
         }
+
+        _logger.LogWarning("Leave Type failed due to invalid data");
         return View(leaveCreate);
     }
 
@@ -101,7 +97,7 @@ public class LeaveTypesController(ILeaveTypesService _leaveTypes) : Controller
         if (await _leaveTypes.CheckIfLeaveTypeExistForEditAsync(leaveTypeEdit))
         {
             ModelState.AddModelError(nameof(leaveTypeEdit.Name), NameExistsValidation);
-        } 
+        }
 
         if (ModelState.IsValid)
         {
