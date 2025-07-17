@@ -19,10 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\LeaveManagementSystem.Application\LeaveManagementSystem.Application.csproj" />
    
   </ItemGroup>
