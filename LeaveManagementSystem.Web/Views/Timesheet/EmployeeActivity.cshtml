@@ -1,0 +1,84 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@model List<EmployeeActivityVM>
+
+@{
+    ViewData["Title"] = "Admin Timesheet Dashboard";
+}
+
+<h1 class="mb-4">Employee Activity</h1>
+
+@if(TempData["NoActivityMessage"] != null)
+{
+    <div class="alert alert-info d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>@TempData["NoActivityMessage"]</div>
+    </div>
+}
+
+@if(Model != null && Model.Any())
+{
+    <!-- Employee Activity -->
+    <h4 class="mt-5 mb-3">Employees</h4>
+    <table id="EmployeeDataTable" class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Employee</th>
+                <th>On Time</th>
+                <th>Late</th>
+                <th>Missed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var emp in Model)
+            {
+                <tr>
+                    <td>@emp.EmployeeName</td>
+                    <td>@(emp.SubmittedOnTime ? "✅" : "❌")</td>
+                    <td>@emp.LateSubmissionsCount</td>
+                    <td>@emp.MissedSubmissionsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Export Options -->
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export CSV
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="bi bi-filetype-pdf"></i> Export PDF
+        </button>
+        <button class="btn btn-outline-dark">
+            <i class="bi bi-funnel-fill"></i> Filter
+        </button>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // DataTable Initialization
+            $('#EmployeeDataTable').DataTable({
+                responsive: true,
+                scrollY: '300px',
+                scrollCollapse: true,
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100]
+            });
+
+            // Move the search box into your custom header div
+            $(".dataTables_filter").appendTo(".datatable-header");
+
+            // Set the placeholder and remove the label text
+            $(".dataTables_filter label").each(function () {
+                const $input = $(this).find('input');
+                $input.attr("placeholder", "Search...");
+                $(this).contents().filter(function () {
+                    return this.nodeType === 3;
+                }).remove();
+            });
+        });
+    </script>
+}

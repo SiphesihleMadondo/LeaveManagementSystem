@@ -1,0 +1,98 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@using static LeaveManagementSystem.Data.Timesheet
+@model List<TimesheetApprovalQueueItemVM>
+
+@{
+    ViewData["Title"] = "Admin Timesheet Dashboard";
+}
+
+<h1 class="mb-4">Timesheet Approvals</h1>
+
+@if (TempData["NoApprovalMessage"] != null)
+{
+    <div class="alert alert-info d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>@TempData["NoApprovalMessage"]</div>
+    </div>
+}
+
+@if(Model != null && Model.Any())
+{
+    <!-- Approval Queue -->
+    <h4 class="mb-3">Approval Queue</h4>
+    <table id="ApprovalsDataTable" class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Employee</th>
+                <th>Week Starting</th>
+                <th>Total Hours</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EmployeeName</td>
+                    <td>@item.WeekStartDate.ToString("dd MMM yyyy")</td>
+                    <td>@item.TotalHours</td>
+                    <td><span class="badge bg-warning text-dark">@item.Status</span></td>
+                    <td>
+                        @if ((item.Status == TimesheetStatus.Pending) || (item.Status == TimesheetStatus.Draft))
+                        {
+                            <a asp-action="Review" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info d-flex align-items-center justify-content-center gap-2">
+                                <iconify-icon icon="mdi:eye-check-outline" style="font-size: 16px;"></iconify-icon>
+                                <span>Review</span>
+                            </a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Export Options -->
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export CSV
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="bi bi-filetype-pdf"></i> Export PDF
+        </button>
+        <button class="btn btn-outline-dark">
+            <i class="bi bi-funnel-fill"></i> Filter
+        </button>
+    </div>
+}
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // DataTable Initialization
+            $('#ApprovalsDataTable').DataTable({
+                responsive: true,
+                scrollY: '300px',
+                scrollCollapse: true,
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100]
+            });
+
+            // Move the search box into your custom header div
+            $(".dataTables_filter").appendTo(".datatable-header");
+
+            // Set the placeholder and remove the label text
+            $(".dataTables_filter label").each(function () {
+                const $input = $(this).find('input');
+                $input.attr("placeholder", "Search...");
+                $(this).contents().filter(function () {
+                    return this.nodeType === 3;
+                }).remove();
+            });
+        });
+    </script>
+}

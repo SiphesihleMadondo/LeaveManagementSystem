@@ -29,6 +29,8 @@ namespace LeaveManagementSystem.Data
         public DbSet<Period> Periods { get; set; }
         public DbSet<LeaveRequestStatus> LeaveRequestStatuses { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<Timesheet> Timesheets { get; set; }
+        public DbSet<TimesheetEntry> TimesheetEntries { get; set; }
     }
 
 }

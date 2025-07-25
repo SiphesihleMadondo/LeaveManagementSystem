@@ -5,6 +5,7 @@ using LeaveManagementSystem.Application.Services.LeaveCalculationService;
 using LeaveManagementSystem.Application.Services.LeaveRequests;
 using LeaveManagementSystem.Application.Services.LeaveTypes;
 using LeaveManagementSystem.Application.Services.Periods;
+using LeaveManagementSystem.Application.Services.Timesheet;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,9 @@ namespace LeaveManagementSystem.Application
             services.AddScoped<ILeaveRequestsService, LeaveRequestsService>();
             services.AddScoped<ILeaveCalculatorService, LeaveCalculatorService>();
             services.AddScoped<ICurrentUser, CurrentUserService>();
+            services.AddScoped<ITimesheetService, TimesheetService>(); // Register the TimesheetService
             services.AddTransient<IEmailSender, EmailSender>(); // we want new instant everytime we run the app
+            
             return services;
         }
     }

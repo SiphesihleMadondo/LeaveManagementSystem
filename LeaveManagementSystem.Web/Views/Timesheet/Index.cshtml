@@ -1,0 +1,194 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@using static LeaveManagementSystem.Data.Timesheet
+@model TimesheetReadOnlyVM
+
+@{
+    ViewData["Title"] = "Timesheet Summary";
+}
+
+<h1 class="mb-3">Timesheet Summary</h1>
+<hr />
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a asp-action="Create" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-1" style="width: 250px;">
+        <i class="bi bi-plus-circle-fill"></i> Create New Timesheet
+    </a>
+
+    <!-- Average Hours Worked -->
+    <div class="d-flex justify-content-end mb-4 col-md-4">
+        <div class="card bg-light border-0 shadow-sm">
+            <div class="card-body">
+                <h5>Average Hours (This Month)</h5>
+                <h3>@Model.AverageHoursPerTimesheet hrs</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5>Total Timesheets</h5>
+                <h2>@Model.TotalTimesheets</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5>Approved</h5>
+                <h2 class="text-success">@Model.StatusCounts.GetValueOrDefault(TimesheetStatus.Approved)</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5>Pending</h5>
+                <h2 class="text-warning">@Model.StatusCounts.GetValueOrDefault(TimesheetStatus.Pending)</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5>Rejected</h5>
+                <h2 class="text-danger">@Model.StatusCounts.GetValueOrDefault(TimesheetStatus.Declined)</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@if (!Model.RecentTimesheets.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> You don't have any timesheets at the moment.
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="mb-3">Recent Timesheets</h4>
+            <table id="RecentTimesheetsDataTable" class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Week Starting</th>
+                        <th>Status</th>
+                        <th>Hours Worked</th>
+                        <th>Submitted At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var timesheet in Model.RecentTimesheets)
+                    {
+                        <tr>
+                            <td>@timesheet.WeekStartDate.ToString("dddd, dd MMM yyyy")</td>
+                            <td>
+                                @switch (timesheet.Status)
+                                {
+                                    case TimesheetStatus.Approved:
+                                        <span class="badge bg-success">Approved</span>
+                                        break;
+                                    case TimesheetStatus.Pending:
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        break;
+                                    case TimesheetStatus.Declined:
+                                        <span class="badge bg-danger">Rejected</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">@timesheet.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td>@timesheet.TotalHours</td>
+                            <td>@(timesheet.SubmittedAt?.ToString("dddd, dd MMM yyyy") ?? "-")</td>
+                            <td class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@timesheet.Id" class="btn btn-sm btn-outline-info d-flex align-items-center gap-1">
+                                    <iconify-icon icon="solar:eye-line-duotone" width="18" height="18"></iconify-icon>View
+                                </a>
+                                @{
+                                    bool isApproved = timesheet.Status == TimesheetStatus.Approved;
+                                    string editUrl = Url.Action("Edit", new { id = timesheet.Id });
+                                    string deleteClass = isApproved ? "btn btn-sm btn-outline-secondary disabled" : "btn btn-sm btn-outline-danger btnDelete";
+                                    string editClass = isApproved ? "btn btn-sm btn-outline-secondary disabled" : "btn btn-sm btn-outline-info";
+                                }
+
+                                <a href="@editUrl" class="@editClass" @(isApproved ? "aria-disabled=\"true\" tabindex=\"-1\"" : "")>
+                                    <iconify-icon icon="solar:pen-line-duotone"></iconify-icon> Edit
+                                </a>
+
+                                <button type="submit" data-id="@timesheet.Id" class="@deleteClass" @(isApproved ? "disabled" : "")>
+                                    <iconify-icon icon="solar:trash-bin-minimalistic-line-duotone"></iconify-icon> Delete
+                                </button>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<form id="DeleteForm" asp-action="Delete">
+    <input type="hidden" id="TimesheetId" name="id" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+             // DataTable Initialization
+            $('#RecentTimesheetsDataTable').DataTable({
+                responsive: true,
+                scrollY: '300px',
+                scrollCollapse: true,
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100]
+            });
+
+            // Move the search box into your custom header div
+            $(".dataTables_filter").appendTo(".datatable-header");
+
+            // Set the placeholder and remove the label text
+            $(".dataTables_filter label").each(function () {
+                const $input = $(this).find('input');
+                $input.attr("placeholder", "Search...");
+                $(this).contents().filter(function () {
+                    return this.nodeType === 3;
+                }).remove();
+            });
+
+            //delete confirmation
+            $('.btnDelete').on('click', function (e) {
+                e.preventDefault();
+
+                const btn = $(this);
+                const id = btn.data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#TimesheetId').val(id);
+                        $('#DeleteForm').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

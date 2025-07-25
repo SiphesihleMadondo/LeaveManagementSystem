@@ -1,0 +1,93 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@model EmployeeTimesheetVM
+
+@{
+    ViewData["Title"] = "Edit Timesheet";
+}
+
+<h1>Edit Timesheet</h1>
+<hr />
+
+@if (ViewBag.TimesheetAlreadyExists == true)
+{
+    <div class="alert alert-warning">
+        A timesheet for this week already exists.
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @for (int i = 0; i < Model.Entries.Count; i++)
+            {
+                <div class="border rounded p-3 mb-3">
+
+                    <h5 id="displayDate-@i">@Model.Entries[i].Date.ToString("dddd, dd MMM yyyy")</h5>
+
+                    <div class="form-group">
+                        <label asp-for="Entries[@i].Date" class="control-label">Date</label>
+                        <input asp-for="Entries[@i].Date" class="form-control"
+                               type="date"
+                               id="entryDate-@i"
+                               onchange="updateHeading(@i)" />
+                        <span asp-validation-for="Entries[@i].Date" class="text-danger"></span>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <label asp-for="Entries[@i].HoursWorked" class="control-label">Hours Worked</label>
+                        <input asp-for="Entries[@i].HoursWorked" class="form-control" />
+                        <span asp-validation-for="Entries[@i].HoursWorked" class="text-danger"></span>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <label asp-for="Entries[@i].TaskDescription" class="control-label">Task Description</label>
+                        <textarea asp-for="Entries[@i].TaskDescription" class="form-control" rows="2" placeholder="Describe what you worked on..."></textarea>
+                        <span asp-validation-for="Entries[@i].TaskDescription" class="text-danger"></span>
+                    </div>
+
+                </div>
+            }
+
+            <div class="form-group">
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" name="actionType" value="Save" class="btn btn-warning d-flex align-items-center gap-1">
+                        <i class="bi bi-save2"></i> Save Changes
+                    </button>
+
+                    <button type="submit" name="actionType" value="Submit" class="btn btn-success d-flex align-items-center gap-1">
+                        <i class="bi bi-send-check"></i> Submit
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-secondary d-flex align-items-center gap-1">
+                        <i class="bi bi-arrow-left-circle"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateHeading(index) {
+            const dateInput = document.getElementById(`entryDate-${index}`);
+            const display = document.getElementById(`displayDate-${index}`);
+            const selectedDate = new Date(dateInput.value);
+            if (!isNaN(selectedDate)) {
+                const options = { weekday: 'long', year: 'numeric', month: 'short', day: '2-digit' };
+                display.innerText = selectedDate.toLocaleDateString(undefined, options);
+            } else {
+                display.innerText = "Invalid Date";
+            }
+        }
+    </script>
+}

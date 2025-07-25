@@ -1,0 +1,76 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@model ReviewTimesheetVM
+
+@{
+    ViewData["Title"] = "Review Timesheet";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center fw-semibold">@ViewData["Title"]</h2>
+
+    <!-- Employee Card -->
+    <div class="card shadow-sm border-1 rounded-4 mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-muted mb-3">Employee Information</h5>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-person-circle me-2 text-secondary"></i>
+                <strong>Name:</strong> @Model.EmployeeFirstName @Model.EmployeeLastName 
+                </div>
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-envelope me-2 text-secondary"></i>
+                  <strong>Email:</strong> @Model.EmployeeEmail 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timesheet Details -->
+    <div class="card shadow-sm border-1 rounded-4 mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-muted mb-3">Timesheet for @Model.WeekStartDate.ToString("dd MMM yyyy")</h5>
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Hours Worked</th>
+                        <th>Task Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in Model.Entries)
+                    {
+                        <tr>
+                            <td>@entry.Date.ToString("ddd, dd MMM")</td>
+                            <td>@entry.HoursWorked</td>
+                            <td>@entry.TaskDescription</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Admin Comment -->
+    <form method="post" asp-action="Review">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="TimesheetId" value="@Model.TimesheetId" />
+        <div class="mb-3">
+            <label for="AdminComment" class="form-label">Admin Comment (optional)</label>
+            <textarea class="form-control" id="AdminComment" name="AdminComment" rows="3">@Model.AdminComment</textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <button type="submit" name="approved" value="true" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Approve
+            </button>
+            <button type="submit" name="approved" value="false" class="btn btn-danger">
+                <i class="bi bi-x-circle me-1"></i> Reject
+            </button>
+            <a asp-action="Approval" class="btn btn-secondary ms-auto">
+                <i class="bi bi-arrow-left me-1"></i> Back to List
+            </a>
+        </div>
+    </form>
+</div>

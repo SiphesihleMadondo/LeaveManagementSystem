@@ -184,43 +184,62 @@
                                         <span class="hide-menu">Timesheet</span>
                                     </div>
                                 </a>
-
+                               
                                 <ul aria-expanded="false" class="collapse first-level">
+
+                                @if(User.IsInRole(StaticRoles.Employee))
+                                { 
                                     <!-- Timesheet Entries -->
                                     <li class="sidebar-item">
                                         <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
-                                           asp-controller="Timesheets" asp-action="Index">
+                                           asp-controller="Timesheet" asp-action="Index">
                                             <iconify-icon icon="solar:document-text-line-duotone" class="sidebar-icon"></iconify-icon>
                                             <span class="hide-menu">Timesheet Entries</span>
                                         </a>
                                     </li>
+                                }
+                                   
 
-                                    <!-- Approvals -->
-                                    <li class="sidebar-item">
-                                        <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
-                                           asp-controller="Approvals" asp-action="Index">
-                                            <iconify-icon icon="solar:check-circle-line-duotone" class="sidebar-icon"></iconify-icon>
-                                            <span class="hide-menu">Approvals</span>
-                                        </a>
-                                    </li>
+                                @if (User.IsInRole(StaticRoles.Administrator))
+                                {
+                                        
+                                <!-- Approvals -->
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
+                                        asp-controller="Timesheet" asp-action="Approval">
+                                        <iconify-icon icon="solar:check-circle-line-duotone" class="sidebar-icon"></iconify-icon>
+                                        <span class="hide-menu">Approvals</span>
+                                    </a>
+                                </li>
 
-                                    <!-- Time Summary -->
-                                    <li class="sidebar-item">
-                                        <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
-                                           asp-controller="Reports" asp-action="TimesheetSummary">
-                                            <iconify-icon icon="solar:clock-square-line-duotone" class="sidebar-icon"></iconify-icon>
-                                            <span class="hide-menu">Time Summary</span>
-                                        </a>
-                                    </li>
+                                <!--Employee Activity-->
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
+                                        asp-controller="Timesheet" asp-action="EmployeeActivity">
+                                        <iconify-icon icon="tabler:activity-heartbeat"></iconify-icon>
+                                        <span class="hide-menu">Employee Activity</span>
+                                    </a>
+                                </li>
 
-                                    <!-- Periods -->
+                                <!-- Time Summary -->
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
+                                        asp-controller="Timesheet" asp-action="Dashboard">
+                                       <iconify-icon icon="mdi:calendar-check-outline"></iconify-icon>
+                                        <span class="hide-menu">Submission History</span>
+                                    </a>
+                                </li>
+
+                                }
+
+                                   @*  <!-- Periods -->
                                     <li class="sidebar-item">
                                         <a class="sidebar-link d-flex align-items-center gap-2 primary-hover-bg"
                                            asp-controller="Periods" asp-action="Index">
                                             <iconify-icon icon="solar:calendar-line-duotone" class="sidebar-icon"></iconify-icon>
                                             <span class="hide-menu">Periods</span>
                                         </a>
-                                    </li>
+                                    </li> *@
 
                                 </ul>
                             </li>

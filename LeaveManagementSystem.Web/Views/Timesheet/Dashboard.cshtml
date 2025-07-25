@@ -1,0 +1,123 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@model AdminTimesheetDashboardVM
+
+@{
+    ViewData["Title"] = "Admin Timesheet Dashboard";
+}
+
+<h1 class="mb-4">All Submissions</h1>
+
+@if(TempData["NoTimesheetsMessage"] != null)
+{
+    <div class="alert alert-info d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>@TempData["NoTimesheetsMessage"]</div>
+    </div>
+}
+
+@if (Model != null && Model.AllSubmittedTimesheets.Count > 0)
+{
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Total This Week</h6>
+                    <h3>@Model.TotalTimesheetsThisWeek</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Pending Approvals</h6>
+                    <h3 class="text-warning">@Model.PendingApprovals</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Avg Hrs/Employee</h6>
+                    <h3>@Model.AverageHoursPerEmployee</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Missing Submissions</h6>
+                    <h3 class="text-danger">@Model.MissingSubmissions</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Timesheets -->
+    <h4 class="mt-5 mb-3">All Submitted Timesheets</h4>
+    <table id="SubmittedTimesheetsDataTable" class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Employee</th>
+                <th>Week Starting</th>
+                <th>Total Hours</th>
+                <th>Status</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model.AllSubmittedTimesheets)
+            {
+                <tr>
+                    <td>@t.EmployeeFullName</td>
+                    <td>@t.WeekStartDate.ToString("dd MMM yyyy")</td>
+                    <td>@t.TotalHours</td>
+                    <td>@t.Status</td>
+                    <td>@(t.SubmittedAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Export Options -->
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export CSV
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="bi bi-filetype-pdf"></i> Export PDF
+        </button>
+        <button class="btn btn-outline-dark">
+            <i class="bi bi-funnel-fill"></i> Filter
+        </button>
+    </div>
+}
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // DataTable Initialization
+            $('#SubmittedTimesheetsDataTable').DataTable({
+                responsive: true,
+                scrollY: '300px',
+                scrollCollapse: true,
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100]
+            });
+
+            // Move the search box into your custom header div
+            $(".dataTables_filter").appendTo(".datatable-header");
+
+            // Set the placeholder and remove the label text
+            $(".dataTables_filter label").each(function () {
+                const $input = $(this).find('input');
+                $input.attr("placeholder", "Search...");
+                $(this).contents().filter(function () {
+                    return this.nodeType === 3;
+                }).remove();
+            });
+        });
+    </script>
+}
