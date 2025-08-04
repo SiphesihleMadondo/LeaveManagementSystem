@@ -1,5 +1,6 @@
 ﻿using LeaveManagementSystem.Application.Services.CurrentUser;
 using LeaveManagementSystem.Application.Services.Email;
+using LeaveManagementSystem.Application.Services.Export;
 using LeaveManagementSystem.Application.Services.LeaveAllocations;
 using LeaveManagementSystem.Application.Services.LeaveCalculationService;
 using LeaveManagementSystem.Application.Services.LeaveRequests;
@@ -30,8 +31,12 @@ namespace LeaveManagementSystem.Application
             services.AddScoped<ILeaveCalculatorService, LeaveCalculatorService>();
             services.AddScoped<ICurrentUser, CurrentUserService>();
             services.AddScoped<ITimesheetService, TimesheetService>(); // Register the TimesheetService
+            services.AddScoped<IExportService, ExportService>(); // Register the ExportService for exporting data
             services.AddTransient<IEmailSender, EmailSender>(); // we want new instant everytime we run the app
-            
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllersWithViews().AddNewtonsoftJson();
+
+
             return services;
         }
     }

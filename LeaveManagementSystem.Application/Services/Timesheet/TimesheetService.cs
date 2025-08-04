@@ -13,7 +13,7 @@ using static LeaveManagementSystem.Data.Timesheet;
 
 namespace LeaveManagementSystem.Application.Services.Timesheet
 {
-    public class TimesheetService(ICurrentUser _currentUser, ApplicationDbContext dbContext, IMapper _mapper) : ITimesheetService
+    public class TimesheetService(ICurrentUser _currentUser, ApplicationDbContext _dbContext, IMapper _mapper) : ITimesheetService
     {
 
         //
@@ -26,7 +26,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var currentMonth = DateTime.UtcNow.Month;
             var currentYear = DateTime.UtcNow.Year;
 
-            var timesheets = await dbContext.Timesheets
+            var timesheets = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .Where(t => t.EmployeeId == user.Id &&
                             t.WeekStartDate.Month == currentMonth &&
@@ -67,7 +67,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
 
         public async Task<TimesheetReadOnlyVM> TimesheetDetails(int id)
         {
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .Include(t => t.Employee) // assuming you want the employee name
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -99,7 +99,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var user = await _currentUser.GetCurrentUser();
             if (user == null)
                 return false;
-            return await dbContext.Timesheets.AnyAsync(t => t.Id == timesheetId && t.EmployeeId == user.Id, cancellationToken);
+            return await _dbContext.Timesheets.AnyAsync(t => t.Id == timesheetId && t.EmployeeId == user.Id, cancellationToken);
         }
 
         public async Task<List<EmployeeTimesheetSummaryVM>> GetTimesheetsAsync(CancellationToken cancellationToken = default)
@@ -109,7 +109,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             if (user == null)
                 return [];
 
-            var timesheets = await dbContext.Timesheets
+            var timesheets = await _dbContext.Timesheets
                 .Where(t => t.EmployeeId == user.Id)
                 .OrderByDescending(t => t.WeekStartDate)
                 .ToListAsync(cancellationToken);
@@ -132,7 +132,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var existingTimesheet = _mapper.Map<LeaveManagementSystem.Data.Timesheet>(employeeTimesheet);
 
             //check if the timesheet already exists for the user
-            existingTimesheet = await dbContext.Timesheets.
+            existingTimesheet = await _dbContext.Timesheets.
             Include(t => t.Entries).
             FirstOrDefaultAsync(t => t.EmployeeId == user.Id && t.WeekStartDate == DateOnly.FromDateTime(employeeTimesheet.WeekStartDate.Date));
 
@@ -140,7 +140,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             {
 
                 //Remove previous entries
-                dbContext.TimesheetEntries.RemoveRange(existingTimesheet.Entries);
+                _dbContext.TimesheetEntries.RemoveRange(existingTimesheet.Entries);
 
                 existingTimesheet.Entries = employeeTimesheet.Entries.Select(e => new TimesheetEntry
                 {
@@ -172,11 +172,11 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
                         (int)TimesheetStatus.Pending
                         : (int)TimesheetStatus.Draft)
                 };
-                await dbContext.Timesheets.AddAsync(newTimesheet);
+                await _dbContext.Timesheets.AddAsync(newTimesheet);
             }
 
             // Save changes to the database
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
         }
 
@@ -186,7 +186,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var user = await _currentUser.GetCurrentUser();
             if (user == null)
                 return null;
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.Id == id && t.EmployeeId == user.Id, cancellationToken);
             if (timesheet == null)
@@ -214,14 +214,14 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             if (user == null || employeeTimesheet == null)
                 return;
 
-            var existingTimesheet = await dbContext.Timesheets
+            var existingTimesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.EmployeeId == user.Id && t.Id == employeeTimesheet.Id, cancellationToken);
 
             if (existingTimesheet != null)
             {
                 // Replace old entries with new
-                dbContext.TimesheetEntries.RemoveRange(existingTimesheet.Entries);
+                _dbContext.TimesheetEntries.RemoveRange(existingTimesheet.Entries);
 
                 existingTimesheet.Entries = employeeTimesheet.Entries.Select(e => new TimesheetEntry
                 {
@@ -241,7 +241,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
                     existingTimesheet.Status = TimesheetStatus.Draft;
                 }
 
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
 
@@ -251,16 +251,38 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var user = await _currentUser.GetCurrentUser();
             if (user == null)
                 return;
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.Id == id && t.EmployeeId == user.Id, cancellationToken);
             if (timesheet != null)
             {
-                dbContext.TimesheetEntries.RemoveRange(timesheet.Entries);
-                dbContext.Timesheets.Remove(timesheet);
-                await dbContext.SaveChangesAsync(cancellationToken);
+                _dbContext.TimesheetEntries.RemoveRange(timesheet.Entries);
+                _dbContext.Timesheets.Remove(timesheet);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
+
+        //GetPendingTimesheetsForUserAsync
+        public async Task<List<TimesheetReadOnlyVM>> GetPendingTimesheetsForUserAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var timesheets = await _dbContext.Timesheets
+                .Include(t => t.Employee)
+                .Include(t => t.Entries)
+                .Where(t => t.EmployeeId == userId && t.Status != TimesheetStatus.Approved)
+                .OrderByDescending(t => t.WeekStartDate)
+                .ToListAsync(cancellationToken);
+
+            return timesheets.Select(t => new TimesheetReadOnlyVM
+            {
+                Id = t.Id,
+                WeekStartDate = t.WeekStartDate,
+                Status = t.Status,
+                SubmittedAt = t.SubmittedAt,
+                TotalHours = t.Entries.Sum(e => e.HoursWorked),
+                EmployeeFullName = $"{t.Employee.FirstName} {t.Employee.LastName}"
+            }).ToList();
+        }
+
 
         public async Task<bool> DuplicateTimesheetExistsAsync(int currentTimesheetId, EmployeeTimesheetVM? employeeTimesheet, CancellationToken cancellationToken)
         {
@@ -270,7 +292,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
 
             var weekStartDate = DateOnly.FromDateTime(employeeTimesheet.WeekStartDate.Date);
 
-            return await dbContext.Timesheets.AnyAsync(t =>
+            return await _dbContext.Timesheets.AnyAsync(t =>
                 t.EmployeeId == user.Id &&
                 t.WeekStartDate == DateOnly.FromDateTime(employeeTimesheet.WeekStartDate) &&
                 t.Id != currentTimesheetId, // Exclude the one being edited
@@ -284,7 +306,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             var currentWeekStart = DateTime.UtcNow.StartOfWeek(DayOfWeek.Monday);
 
             //get all the timesheets for the current month
-            var timesheets = await dbContext.Timesheets
+            var timesheets = await _dbContext.Timesheets
                 .Include(t => t.Employee)
                 .Include(t => t.Entries)
                 .Where(t => t.SubmittedAt != null) // Optional: only include submitted timesheets
@@ -329,7 +351,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         //emplyee activity
         public async Task<List<EmployeeActivityVM>> GetEmployeeActivitiesAsync(CancellationToken cancellationToken = default)
         {
-            var timesheets = await dbContext.Timesheets
+            var timesheets = await _dbContext.Timesheets
                 .Include(t => t.Employee)
                 .Where(t => t.EmployeeId != null)
                 .OrderByDescending(t => t.WeekStartDate)
@@ -346,7 +368,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         //Approval queue for admin
         public async Task<List<TimesheetApprovalQueueItemVM>> GetApprovalQueueAsync(CancellationToken cancellationToken = default)
         {
-            var timesheets = await dbContext.Timesheets
+            var timesheets = await _dbContext.Timesheets
                 .Include(t => t.Employee)
                 .Include(t => t.Entries)
                 .Where(t => t.Status == TimesheetStatus.Pending)
@@ -369,7 +391,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         //Admin approval of timesheets
         public async Task ApproveTimesheetAsync(int timesheetId, string adminComment, CancellationToken cancellationToken = default)
         {
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.Id == timesheetId, cancellationToken);
             if (timesheet != null)
@@ -377,14 +399,14 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
                 timesheet.Status = TimesheetStatus.Approved;
                 timesheet.ReviewedAt = DateOnly.FromDateTime(DateTime.UtcNow);
                 timesheet.AdminComment = adminComment;
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
 
         //Admin decline of timesheets
         public async Task DeclineTimesheetAsync(int timesheetId, string adminComment, CancellationToken cancellationToken = default)
         {
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.Id == timesheetId, cancellationToken);
             if (timesheet != null)
@@ -392,13 +414,13 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
                 timesheet.Status = TimesheetStatus.Declined;
                 timesheet.ReviewedAt = DateOnly.FromDateTime(DateTime.UtcNow);
                 timesheet.AdminComment = adminComment;
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
         //Review Timesheet/Review/1012
         public async Task<ReviewTimesheetVM?> GetTimesheetForReviewAsync(int id, CancellationToken cancellationToken)
         {
-            var timesheet = await dbContext.Timesheets
+            var timesheet = await _dbContext.Timesheets
                  .Include(t => t.Employee)
                  .Include(t => t.Entries)
                  .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
@@ -426,7 +448,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
 
         public async Task<Data.Timesheet> GetTimesheetByIdAsync(int timesheetId, CancellationToken cancellationToken)
         {
-              var timesheet = await dbContext.Timesheets
+              var timesheet = await _dbContext.Timesheets
                 .Include(t => t.Entries)
                 .FirstOrDefaultAsync(t => t.Id == timesheetId, cancellationToken);
             if (timesheet == null)
@@ -435,5 +457,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             }
             return timesheet;
         }
+
+
     }
 }

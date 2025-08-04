@@ -1,14 +1,17 @@
 ﻿using LeaveManagementSystem.Application.Models.Timesheet;
 using LeaveManagementSystem.Application.Services.CurrentUser;
+using LeaveManagementSystem.Application.Services.Export;
 using LeaveManagementSystem.Application.Services.Timesheet;
 using LeaveManagementSystem.Common.Static;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.Threading;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
     [Authorize(Roles = $"{StaticRoles.Administrator},{StaticRoles.Employee}")]
-    public class TimesheetController(ICurrentUser _currentUser, ITimesheetService _timesheetService) : Controller
+    public class TimesheetController(UserManager<ApplicationUser> _userManager, ICurrentUser _currentUser, ITimesheetService _timesheetService, IExportService _exportService) : Controller
     {
 
 
@@ -246,6 +249,28 @@ namespace LeaveManagementSystem.Web.Controllers
             }
         }
 
+        // GET: GetPendingTimesheetsForUserAsync for employee
+        [HttpGet]
+        [Authorize(Roles = StaticRoles.Employee)]
+        public async Task<IActionResult> EmpPendingTimesheets(CancellationToken cancellationToken)
+        {
+            // Get the current user ID from the UserManager and fetch their pending timesheets
+            var currentUserId = _userManager.GetUserId(User);
+            var currentUser = await _currentUser.GetUserById(currentUserId);
+
+            if (currentUser == null)
+            {
+                return Unauthorized();
+            }
+            var pendingTimesheets = await _timesheetService.GetPendingTimesheetsForUserAsync(currentUser.Id, cancellationToken);
+            if (pendingTimesheets == null || !pendingTimesheets.Any())
+            {
+                TempData["NoPendingMessage"] = "You have no pending timesheets.";
+                return View(new List<TimesheetReadOnlyVM>());
+            }
+            return View(pendingTimesheets);
+        }
+
         //GET dashboard for timesheet summary
         [HttpGet]
         [Authorize(Roles = StaticRoles.Administrator)]
@@ -286,23 +311,32 @@ namespace LeaveManagementSystem.Web.Controllers
         }
 
 
-        // GET: Timesheet/Export
-        [HttpGet]
-        public async Task<IActionResult> Export(CancellationToken cancellationToken = default)
+        [HttpPost("ExportToCsv")]
+        public IActionResult ExportToCsv([FromQuery] string fields, [FromBody] JArray data)
         {
-            var timesheets = await _timesheetService.GetTimesheetsAsync(cancellationToken);
-            if (timesheets == null || !timesheets.Any())
+
+            //foreach (JObject item in data)
+            //{
+            //    Console.WriteLine(item.ToString()); // Temporary debug
+            //}
+
+            try
             {
-                return NotFound("No timesheets available for export.");
+                if (string.IsNullOrWhiteSpace(fields))
+                    return BadRequest("No fields specified.");
+
+                var fieldList = fields.Split(',').Select(f => f.Trim()).Where(f => !string.IsNullOrEmpty(f)).ToList();
+
+                var csvBytes = _exportService.ConvertToCsv(data, fieldList, out var contentType, out var fileName);
+                return File(csvBytes, contentType, fileName);
             }
-            // Logic to export timesheets (e.g., to CSV or Excel) goes here
-            // For example, you can use a library like CsvHelper or EPPlus
-            // Placeholder for export logic
-            // var exportedFile = ExportToCsv(timesheets);
-            // return File(exportedFile, "text/csv", "timesheets.csv");
-            return View(timesheets); // Replace with actual export logic
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
+
     }
 
 }

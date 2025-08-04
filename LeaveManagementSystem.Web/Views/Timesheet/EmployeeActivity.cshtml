@@ -43,20 +43,54 @@
 
     <!-- Export Options -->
     <div class="mt-4 d-flex gap-2">
-        <button class="btn btn-outline-primary">
+        <button id="exportCsvBtn" class="btn btn-outline-primary">
             <i class="bi bi-file-earmark-excel"></i> Export CSV
         </button>
-        <button class="btn btn-outline-secondary">
+     @*    <button class="btn btn-outline-secondary">
             <i class="bi bi-filetype-pdf"></i> Export PDF
         </button>
         <button class="btn btn-outline-dark">
             <i class="bi bi-funnel-fill"></i> Filter
-        </button>
+        </button> *@
+        <input type="hidden" id="allSubmittedTimesheetsJson" value='@Html.Raw(Json.Serialize(Model))' />
     </div>
 }
 
 @section Scripts{
     <script>
+
+        document.getElementById("exportCsvBtn").addEventListener("click", function () {
+            const selectedFields = [
+                "employeeName",
+                "submittedOnTime",
+                "lateSubmissionsCount",
+                "missedSubmissionsCount",
+            ];
+
+            const json = @Html.Raw(Json.Serialize(Model));
+
+            fetch('/ExportToCsv?fields=' + selectedFields.join(','), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(json)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to export.');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "export.csv";
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+            });
+        });
+
         $(document).ready(function () {
             // DataTable Initialization
             $('#EmployeeDataTable').DataTable({

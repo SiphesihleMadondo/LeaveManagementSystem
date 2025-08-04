@@ -17,13 +17,20 @@
                 <div class="d-flex align-items-center justify-content-center">
                     <h2 class="text">Use a local account to log in.</h2>
                 </div>
-                
+                <div asp-validation-summary="ModelOnly" class="text-danger text-center" role="alert"></div>
                 <form id="account" method="post">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger text-center" role="alert">
+                            @Model.ErrorMessage
+                        </div>
+                    }
                     <div class="mb-3">
                         <label asp-for="Input.Email" class="form-label">Email</label>
                         <input type="email" class="form-control" asp-for="Input.Email" aria-describedby="emailHelp">
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
+
                     <div class="mb-4">
                         <label asp-for="Input.Password" class="form-label">Password</label>
                         <input type="password" class="form-control" asp-for="Input.Password">

@@ -1,0 +1,62 @@
+﻿@using LeaveManagementSystem.Application.Models.Timesheet
+@using static LeaveManagementSystem.Data.Timesheet
+@model List<TimesheetReadOnlyVM>
+
+@{
+    ViewData["Title"] = "My Pending Timesheets";
+}
+
+<h2 class="mb-4">Timesheets Awaiting Approval</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info d-flex align-items-center gap-2">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>No timesheets awaiting approval.</span>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Week Starting</th>
+                <th>Status</th>
+                <th>Total Hours</th>
+                <th>Submitted At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td>@t.WeekStartDate.ToString("dd MMM yyyy")</td>
+                    <td>
+                        @switch (t.Status)
+                        {
+                            case TimesheetStatus.Pending:
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                break;
+                            case TimesheetStatus.Declined:
+                                <span class="badge bg-danger">Declined</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">@t.Status</span>
+                                break;
+                        }
+                    </td>
+                    <td>@t.TotalHours</td>
+                    <td>@(t.SubmittedAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-outline-info">View</a>
+                        @if (t.Status == TimesheetStatus.Declined)
+                        {
+                            <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-outline-warning">Resubmit</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

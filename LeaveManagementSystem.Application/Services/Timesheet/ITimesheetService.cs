@@ -14,6 +14,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         Task<List<TimesheetApprovalQueueItemVM>> GetApprovalQueueAsync(CancellationToken cancellationToken = default);
         Task<AdminTimesheetDashboardVM> GetDashboardAsync(CancellationToken cancellationToken = default);
         Task<List<EmployeeActivityVM>> GetEmployeeActivitiesAsync(CancellationToken cancellationToken = default);
+        Task<List<TimesheetReadOnlyVM>> GetPendingTimesheetsForUserAsync(string userId, CancellationToken cancellationToken = default);
         Task<Data.Timesheet> GetTimesheetByIdAsync(int timesheetId, CancellationToken cancellationToken);
         Task<EmployeeTimesheetVM?> GetTimesheetForEditAsync(int id, CancellationToken cancellationToken = default);
         Task<ReviewTimesheetVM?> GetTimesheetForReviewAsync(int id, CancellationToken cancellationToken);
