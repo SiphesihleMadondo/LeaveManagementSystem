@@ -278,7 +278,7 @@ namespace LeaveManagementSystem.Web.Controllers
         public async Task<IActionResult> SubmissionHistory(CancellationToken cancellationToken = default)
         {
             var timesheetSummary = await _timesheetService.GetDashboardAsync(cancellationToken);
-            if (timesheetSummary == null)
+            if (timesheetSummary == null || !timesheetSummary.AllSubmittedTimesheets.Any())
             {
                 TempData["NoSummaryMessage"] = "No timesheets available.";
             }
