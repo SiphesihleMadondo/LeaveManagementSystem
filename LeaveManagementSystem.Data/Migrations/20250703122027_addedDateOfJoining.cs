@@ -10,6 +10,14 @@ namespace LeaveManagementSystem.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
+            migrationBuilder.AddColumn<DateOnly>(
+                name: "DateOfJoining",
+                table: "AspNetUsers",
+                type: "date",
+                nullable: false,
+                defaultValue: new DateOnly(1, 1, 1));
+
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",

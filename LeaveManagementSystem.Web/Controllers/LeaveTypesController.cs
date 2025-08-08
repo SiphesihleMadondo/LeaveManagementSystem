@@ -103,7 +103,7 @@ public class LeaveTypesController(ILeaveTypesService _leaveTypes, ILogger<LeaveT
         {
             try
             {
-                var leaveType = _leaveTypes.Edit(leaveTypeEdit);
+                await _leaveTypes.Edit(leaveTypeEdit);
             }
             catch (DbUpdateConcurrencyException)
             {
