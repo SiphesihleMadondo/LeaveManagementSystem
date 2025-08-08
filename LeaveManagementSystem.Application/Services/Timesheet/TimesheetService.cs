@@ -300,7 +300,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         }
 
         // Admin Timesheet Dashboard
-        public async Task<AdminTimesheetDashboardVM> GetDashboardAsync(CancellationToken cancellationToken = default)
+        public async Task<SubmissionHistoryVM> GetDashboardAsync(CancellationToken cancellationToken = default)
         {
             //get current week
             var currentWeekStart = DateTime.UtcNow.StartOfWeek(DayOfWeek.Monday);
@@ -334,7 +334,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
             }).ToList();
 
             //dashboard view model
-            var dashboard = new AdminTimesheetDashboardVM
+            var dashboard = new SubmissionHistoryVM
             {
                 TotalTimesheetsThisWeek = allSubmittedTimesheets.Count,
                 PendingApprovals = allSubmittedTimesheets.Count(t => t.Status == TimesheetStatus.Pending),

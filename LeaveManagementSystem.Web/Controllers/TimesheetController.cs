@@ -15,6 +15,7 @@ namespace LeaveManagementSystem.Web.Controllers
     {
 
 
+
         [HttpGet]
         [Authorize(Roles = StaticRoles.Employee)]
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
@@ -271,10 +272,10 @@ namespace LeaveManagementSystem.Web.Controllers
             return View(pendingTimesheets);
         }
 
-        //GET dashboard for timesheet summary
+        //GET Submission History for timesheet summary
         [HttpGet]
         [Authorize(Roles = StaticRoles.Administrator)]
-        public async Task<IActionResult> Dashboard(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> SubmissionHistory(CancellationToken cancellationToken = default)
         {
             var timesheetSummary = await _timesheetService.GetDashboardAsync(cancellationToken);
             if (timesheetSummary == null)

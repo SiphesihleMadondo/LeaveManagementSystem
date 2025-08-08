@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LeaveManagementSystem.Application.Models.Timesheet
 {
-    public class AdminTimesheetDashboardVM
+    public class SubmissionHistoryVM
     {
         // Summary stats
         public int TotalTimesheetsThisWeek { get; set; }

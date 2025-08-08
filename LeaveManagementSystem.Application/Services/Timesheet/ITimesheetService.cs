@@ -12,7 +12,7 @@ namespace LeaveManagementSystem.Application.Services.Timesheet
         Task EditTimesheet(EmployeeTimesheetVM? employeeTimesheet, string actionType, CancellationToken cancellationToken = default);
         Task<TimesheetReadOnlyVM> EmployeeTimeSummary(CancellationToken cancellationToken = default);
         Task<List<TimesheetApprovalQueueItemVM>> GetApprovalQueueAsync(CancellationToken cancellationToken = default);
-        Task<AdminTimesheetDashboardVM> GetDashboardAsync(CancellationToken cancellationToken = default);
+        Task<SubmissionHistoryVM> GetDashboardAsync(CancellationToken cancellationToken = default);
         Task<List<EmployeeActivityVM>> GetEmployeeActivitiesAsync(CancellationToken cancellationToken = default);
         Task<List<TimesheetReadOnlyVM>> GetPendingTimesheetsForUserAsync(string userId, CancellationToken cancellationToken = default);
         Task<Data.Timesheet> GetTimesheetByIdAsync(int timesheetId, CancellationToken cancellationToken);
